@@ -1,0 +1,235 @@
+/* ==========================================================================
+   Sete Vidas — base compartilhada por todas as páginas
+   Tokens, tipografia, cabeçalho, rodapé, botões, formulários,
+   filtro segmentado e transição entre páginas.
+   Tema único escuro (painel de instrumentos).
+   ========================================================================== */
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* ---------- Tokens ---------- */
+:root {
+  color-scheme: dark;
+  --void: #07090F;
+  --panel: #0E1220;
+  --panel-2: #151B2E;
+  --grid: rgb(140 160 255 / 0.05);
+  --line: rgb(150 170 255 / 0.14);
+  --line-hot: rgb(143 123 255 / 0.55);
+  --ink: #E8ECF8;
+  --ink-soft: #8C95B2;
+  --iris: #8F7BFF;
+  --iris-ink: #0B0820;
+  --eye: #FFB23E;   /* âmbar de olho de gato: scan, mira, destaques */
+  --ok: #5BE0A6;
+  --warn: #FF8A7A;
+
+  /* Movimento */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --body: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+
+body {
+  background-color: var(--void);
+  background-image:
+    radial-gradient(900px 480px at 78% -8%, rgb(143 123 255 / 0.16), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  color: var(--ink);
+  font: 16px/1.55 var(--body);
+  padding-inline: 20px;
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+.wrap { max-width: 1140px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; font-weight: 700; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--eye); outline-offset: 3px; border-radius: 6px; }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Cabeçalho ---------- */
+header.top {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px 24px;
+  padding-block: 16px; border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 17px; text-decoration: none; letter-spacing: 0.02em; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: none; }
+nav.links { display: flex; gap: 26px; font-size: 14.5px; color: var(--ink-soft); }
+nav.links a { position: relative; text-decoration: none; padding-block: 6px; white-space: nowrap; transition: color 200ms ease; }
+nav.links a[aria-current="page"] { color: var(--ink); }
+nav.links a[aria-current="page"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 2px; background: var(--eye);
+}
+@media (hover: hover) and (pointer: fine) { nav.links a:hover { color: var(--ink); } }
+
+/* ---------- Títulos de seção ---------- */
+.section-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px 24px; margin-bottom: 24px; }
+.section-title { font-size: clamp(24px, 3.4vw, 34px); letter-spacing: -0.02em; margin-top: 8px; }
+.section-lede { color: var(--ink-soft); max-width: 60ch; margin: 10px 0 0; }
+
+/* Revelação de linha por máscara — uma vez por carregamento */
+.ln { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.ln > span { display: block; transition: transform var(--ln-dur, 800ms) var(--ease-out) calc(var(--d, 0) * 90ms); }
+@starting-style { .ln > span { transform: translateY(105%); } }
+.fade-in { transition: opacity 600ms var(--ease-out) calc(var(--d, 0) * 90ms); }
+@starting-style { .fade-in { opacity: 0; } }
+.hot { color: var(--eye); }
+
+/* ---------- Botões ---------- */
+.btn {
+  appearance: none; border: 0; cursor: pointer; font: 600 15px/1 var(--body);
+  padding: 14px 20px; border-radius: 12px; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform 160ms var(--ease-out), background-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-primary { background: var(--iris); color: var(--iris-ink); }
+.btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn-wa { background: var(--ok); color: #03140C; }
+.btn-sm { padding: 10px 14px; font-size: 14px; border-radius: 10px; }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: #A392FF; }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1px var(--line-hot); }
+  .btn-wa:hover { background: #7BEBBA; }
+}
+
+/* ---------- Formulários ---------- */
+.field { display: grid; gap: 6px; font-size: 14px; }
+.field input[type="text"], .field input[type="tel"], .field select {
+  font: 16px var(--body); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--void); color: var(--ink); transition: border-color 150ms ease;
+}
+.field input:focus-visible, .field select:focus-visible { outline: none; border-color: var(--eye); }
+fieldset.field { border: 0; padding: 0; margin: 0; }
+fieldset.field legend { padding: 0; margin-bottom: 6px; }
+.radios { display: flex; flex-wrap: wrap; gap: 8px; }
+.radios label {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow 150ms ease;
+}
+.radios label:has(input:checked) { box-shadow: inset 0 0 0 1.5px var(--eye); }
+.radios input, .check input { accent-color: var(--eye); margin: 0; }
+.check { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
+.check input { margin-top: 3px; width: 16px; height: 16px; flex: none; }
+.check a { color: var(--ink); }
+.hint { font-size: 13px; color: var(--ink-soft); margin: 0; }
+.error { font-size: 13px; color: var(--warn); margin: 0; }
+
+/* ---------- Filtro / seletor segmentado ----------
+   O estado ativo é uma cópia da fileira, recortada só na opção escolhida:
+   texto e fundo mudam juntos, num único movimento. */
+.seg { position: relative; display: inline-flex; padding: 4px; border-radius: 999px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); max-width: 100%; }
+.seg-row { display: flex; }
+.seg-row > button, .seg-row > span { font: 500 13.5px/1 var(--body); padding: 10px 14px; border-radius: 999px; white-space: nowrap; }
+.seg-row button { appearance: none; border: 0; background: none; color: var(--ink-soft); cursor: pointer; transition: color 150ms ease; }
+@media (hover: hover) and (pointer: fine) { .seg-row button:hover { color: var(--ink); } }
+.seg-row .n { font-family: var(--mono); font-size: 11px; margin-left: 5px; opacity: 0.7; }
+.seg-active { position: absolute; inset: 4px; pointer-events: none; clip-path: inset(0 100% 0 0 round 999px); }
+.seg-active > span { background: var(--eye); color: #1A1204; }
+.seg.ready .seg-active { transition: clip-path 250ms var(--ease-in-out); }
+
+/* ---------- Faixa de chamada ---------- */
+.cta-band {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 32px;
+  margin-block: 24px 64px; padding: 28px; border-radius: 20px;
+  background: linear-gradient(120deg, rgb(143 123 255 / 0.16), rgb(255 178 62 / 0.08)), var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cta-band h2 { font-size: clamp(20px, 2.6vw, 26px); letter-spacing: -0.01em; }
+.cta-band p { margin: 6px 0 0; color: var(--ink-soft); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ---------- Rodapé ---------- */
+footer.site-footer {
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 28px 40px;
+  padding-block: 40px 48px; border-top: 1px solid var(--line); font-size: 14.5px;
+}
+footer.site-footer p { margin: 10px 0 0; color: var(--ink-soft); max-width: 38ch; }
+footer.site-footer ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+footer.site-footer ul a { text-decoration: none; color: var(--ink-soft); transition: color 200ms ease; }
+@media (hover: hover) and (pointer: fine) { footer.site-footer ul a:hover { color: var(--ink); } }
+footer.site-footer .fine { grid-column: 1 / -1; margin: 0; padding-top: 20px; border-top: 1px solid var(--line); max-width: none; }
+
+/* ---------- Acessibilidade ---------- */
+/* Link "Pular para o conteúdo": aparece só ao navegar pelo teclado */
+.skip {
+  position: fixed; top: 10px; left: 10px; z-index: 100; padding: 10px 14px; border-radius: 10px;
+  background: var(--eye); color: #1A1204; font-weight: 600; text-decoration: none;
+  transform: translateY(-160%); transition: transform 200ms var(--ease-out);
+}
+.skip:focus-visible { transform: none; outline-color: var(--ink); }
+main:focus { outline: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Botão com cara de link */
+.link-btn { appearance: none; border: 0; background: none; padding: 6px 0; font: 600 14px var(--body); color: var(--eye); cursor: pointer; text-align: left; }
+@media (hover: hover) and (pointer: fine) { .link-btn:hover { text-decoration: underline; text-underline-offset: 3px; } }
+
+/* Voltar ao topo (criado por js/ambient.js) */
+.to-top {
+  position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40;
+  width: 44px; height: 44px; border-radius: 12px; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line), 0 10px 30px -10px rgb(0 0 0 / 0.7);
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), box-shadow 200ms ease;
+}
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top svg { width: 20px; height: 20px; }
+.to-top:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .to-top:hover { box-shadow: inset 0 0 0 1px var(--line-hot), 0 10px 30px -10px rgb(0 0 0 / 0.7); } }
+
+/* ---------- Ambiente (js/ambient.js) ---------- */
+/* Partículas ao fundo: atrás do conteúdo, sem capturar cliques */
+canvas.motes { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+/* Barra de leitura no topo */
+.read-progress {
+  position: fixed; inset: 0 0 auto; z-index: 50; height: 2px; pointer-events: none; transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--iris), var(--eye), #FF4F8B);
+}
+/* Revelação ao rolar: sobe e aparece uma vez */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 700ms var(--ease-out) calc(var(--r, 0) * 80ms), transform 900ms var(--ease-out) calc(var(--r, 0) * 80ms); }
+.reveal.in { opacity: 1; transform: none; }
+/* Link novo "Sete vidas" no menu: ponto de "novo" */
+nav.links a.new::before {
+  content: ""; position: absolute; top: 4px; right: -9px; width: 6px; height: 6px; border-radius: 50%; background: #FF4F8B;
+}
+nav.links a[aria-current="page"].new::before { display: none; }
+
+/* ---------- Transição entre páginas (navegadores com suporte) ----------
+   O conteúdo faz um crossfade curto; o cabeçalho fica parado no lugar. */
+@view-transition { navigation: auto; types: page; }
+html:active-view-transition-type(page) header.top { view-transition-name: site-header; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 250ms; animation-timing-function: var(--ease-out); }
+
+/* ---------- Movimento reduzido: mantém fades, remove deslocamentos ---------- */
+@media (prefers-reduced-motion: reduce) {
+  @starting-style { .ln > span { transform: none; } }
+  .btn:active { transform: none; }
+  .reveal { opacity: 1; transform: none; }
+  .to-top, .to-top.show { transform: none; }
+  .skip { transition: none; }
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 760px) {
+  header.top { display: grid; grid-template-columns: 1fr auto; }
+  nav.links { grid-column: 1 / -1; order: 3; overflow-x: auto; gap: 22px; margin-inline: -20px; padding-inline: 20px; scrollbar-width: none; }
+  footer.site-footer { grid-template-columns: 1fr 1fr; }
+  footer.site-footer > div:first-child { grid-column: 1 / -1; }
+  .cta-band { padding: 22px; }
+}
+@media (max-width: 560px) {
+  .seg-row .n { display: none; }
+  .seg-row > button, .seg-row > span { padding: 10px 11px; }
+}

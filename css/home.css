@@ -1,0 +1,306 @@
+/* ==========================================================================
+   Página inicial — topo com scanner, grade de gatos, etapas e ficha (modal)
+   Depende de base.css.
+   ========================================================================== */
+
+/* ---------- Topo ---------- */
+.hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; padding-block: 56px 48px; }
+.hero h1 { font-size: clamp(32px, 5.6vw, 62px); line-height: 1.02; letter-spacing: -0.03em; margin: 18px 0 0; }
+.hero p.lede { font-size: 18px; color: var(--ink-soft); max-width: 44ch; margin: 22px 0 28px; }
+
+/* Painel do scanner */
+.scanner { position: relative; padding: 14px; border: 1px solid var(--line); border-radius: 20px; background: rgb(14 18 32 / 0.7); backdrop-filter: blur(6px); }
+.scanner .photo { aspect-ratio: 5 / 4; border-radius: 12px; }
+.scanner .photo .br { opacity: 1; transform: none; }
+.readouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.readouts div { border-top: 1px solid var(--line); padding-top: 8px; min-width: 0; }
+.readouts b { display: block; font-family: var(--mono); font-weight: 500; font-size: 14px; color: var(--ink); margin-top: 2px; letter-spacing: 0; text-transform: none; overflow-wrap: anywhere; }
+.readouts .ok { color: var(--ok); }
+
+/* ---------- Bloco de foto (cards, scanner e ficha) ---------- */
+.photo { position: relative; overflow: hidden; display: grid; place-items: end center; background: var(--panel-2); }
+.photo > svg { width: 74%; height: auto; margin-bottom: -4%; opacity: 0.9; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; }
+.photo img.in { visibility: visible; }
+.photo .scan {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  border-bottom: 2px solid var(--eye);
+  background: linear-gradient(to top, rgb(255 178 62 / 0.22), transparent 35%);
+  box-shadow: 0 6px 18px -4px rgb(255 178 62 / 0.6);
+}
+/* Cantos da mira */
+.br { position: absolute; width: 18px; height: 18px; border: 2px solid var(--eye); pointer-events: none;
+      opacity: 0; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+.br.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; transform: translate(-6px, -6px); }
+.br.tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; transform: translate(6px, -6px); }
+.br.bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; transform: translate(-6px, 6px); }
+.br.brr { bottom: 10px; right: 10px; border-left: 0; border-top: 0; transform: translate(6px, 6px); }
+
+/* ---------- Gatos ---------- */
+section.cats { padding-block: 32px 24px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 18px; }
+
+/* Entrada no primeiro render e quando o filtro mostra um card.
+   Transições (não keyframes): cliques rápidos no filtro redirecionam em vez de reiniciar. */
+.card { transition: opacity 300ms var(--ease-out) calc(var(--i, 0) * 40ms), transform 300ms var(--ease-out) calc(var(--i, 0) * 40ms); }
+@starting-style { .card { opacity: 0; transform: translateY(8px); } }
+
+.card-inner {
+  height: 100%; display: flex; flex-direction: column; background: var(--panel); border-radius: 16px; overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow 200ms ease;
+}
+.card .photo { aspect-ratio: 5 / 4; }
+@media (hover: hover) and (pointer: fine) {
+  .card-inner:hover { box-shadow: inset 0 0 0 1px var(--line-hot); }
+  .card-inner:hover .br { opacity: 1; transform: translate(0, 0); }
+}
+.card-inner:focus-within .br { opacity: 1; transform: translate(0, 0); }
+.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.card h3 { font-size: 19px; letter-spacing: -0.01em; margin-top: 4px; }
+.blurb { margin: 0; font-size: 15px; color: var(--ink-soft); flex: 1; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: var(--mono); font-size: 11px; padding: 4px 7px; border-radius: 6px; color: var(--ok); background: rgb(91 224 166 / 0.1); }
+.card .btn { align-self: stretch; padding: 12px 16px; font-size: 14px; }
+
+/* Destaque da semana no painel do topo */
+.featured {
+  position: absolute; top: 0; left: 24px; translate: 0 -50%; z-index: 2; padding: 5px 10px; border-radius: 999px;
+  background: var(--void); color: var(--eye); box-shadow: inset 0 0 0 1px rgb(255 178 62 / 0.45);
+}
+.scanner-cta { width: 100%; margin-top: 14px; }
+
+/* Selo, personalidade, convivência e tempo de espera nos cards */
+.card-inner { position: relative; }
+.wait-badge {
+  position: absolute; top: 12px; left: 12px; z-index: 2; padding: 4px 8px; border-radius: 999px;
+  background: var(--eye); color: #1A1204; font-weight: 500;
+}
+.tag.trait { color: var(--ink-soft); background: var(--panel-2); }
+.compat { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+.compat li { display: inline-flex; align-items: center; gap: 4px; }
+.compat svg { width: 14px; height: 14px; flex: none; }
+.compat .yes { color: var(--ink); }
+.compat .yes svg { color: var(--ok); }
+.compat .no { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: rgb(140 149 178 / 0.5); }
+.compat .no svg { color: var(--warn); }
+.card .wait { margin: 0; font-size: 11px; }
+
+/* ---------- Filtros de convivência e ordenação ---------- */
+.filters { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 20px; margin: -8px 0 20px; }
+.chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.chips .mono { margin-right: 4px; }
+.chip-toggle {
+  appearance: none; border: 0; cursor: pointer; font: 500 13.5px/1 var(--body); padding: 9px 13px; border-radius: 999px;
+  color: var(--ink-soft); background: transparent; box-shadow: inset 0 0 0 1px var(--line);
+  transition: color 150ms ease, box-shadow 150ms ease, background-color 150ms ease, transform 160ms var(--ease-out);
+}
+.chip-toggle:active { transform: scale(0.97); }
+.chip-toggle[aria-pressed="true"] { color: #03140C; background: var(--ok); box-shadow: none; }
+@media (hover: hover) and (pointer: fine) { .chip-toggle:not([aria-pressed="true"]):hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-hot); } }
+.sort { display: inline-flex; align-items: center; gap: 10px; }
+.sort select {
+  font: 500 14px var(--body); color: var(--ink); background-color: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 30px 9px 12px; appearance: none; cursor: pointer; text-transform: none; letter-spacing: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%238C95B2' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 14px;
+}
+.sort select:focus-visible { outline: 2px solid var(--eye); outline-offset: 2px; }
+.empty { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 22px; border-radius: 16px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.empty p { margin: 0; color: var(--ink-soft); }
+
+/* ---------- Quiz "qual gato combina" ---------- */
+.match-wrap {
+  margin-top: 8px; padding: 28px; border-radius: 22px;
+  background: linear-gradient(135deg, rgb(91 224 166 / 0.08), transparent 45%), var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.match-intro { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px 32px; }
+.match-intro .section-title { margin-top: 6px; }
+.match-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.match-bar { flex: 1; max-width: 220px; height: 4px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+.match-bar i { display: block; height: 100%; background: var(--ok); transform-origin: left; transform: scaleX(var(--p)); }
+.match-q h3, .match-result h3 { font-size: clamp(20px, 2.6vw, 26px); letter-spacing: -0.01em; margin-bottom: 18px; outline: none; }
+.match-q, .match-result { transition: opacity 250ms var(--ease-out), transform 250ms var(--ease-out); }
+@starting-style { .match-q, .match-result { opacity: 0; transform: translateX(12px); } }
+.match-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.match-opt {
+  appearance: none; border: 0; cursor: pointer; text-align: left; font: 16px/1.3 var(--body); color: var(--ink);
+  padding: 16px; border-radius: 14px; background: var(--panel-2); box-shadow: inset 0 0 0 1px var(--line);
+  display: grid; gap: 4px; transition: box-shadow 150ms ease, transform 160ms var(--ease-out);
+}
+.match-opt small { color: var(--ink-soft); font-size: 13px; }
+.match-opt[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--ok); }
+.match-opt:active { transform: scale(0.98); }
+@media (hover: hover) and (pointer: fine) { .match-opt:hover { box-shadow: inset 0 0 0 1px var(--line-hot); } }
+.match-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 12px; }
+.match {
+  display: grid; grid-template-rows: auto 1fr; border-radius: 16px; overflow: hidden; background: var(--panel-2); box-shadow: inset 0 0 0 1px var(--line);
+  transition: opacity 400ms var(--ease-out) calc(var(--i) * 80ms), transform 400ms var(--ease-out) calc(var(--i) * 80ms);
+}
+@starting-style { .match { opacity: 0; transform: translateY(10px); } }
+.match .photo { aspect-ratio: 16 / 10; }
+.match-body { padding: 14px 16px 16px; display: grid; gap: 8px; align-content: start; }
+.match-name { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.match h4 { margin: 0; font: 700 18px/1.1 var(--display); }
+.match .fit { flex: none; font: 500 11px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; color: var(--ok); background: rgb(91 224 166 / 0.12); }
+.match .fit.mid { color: var(--eye); background: rgb(255 178 62 / 0.12); }
+.match .fit.low { color: var(--ink-soft); background: var(--panel); }
+.reasons { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; color: var(--ink-soft); }
+.reasons li::before { content: "✓ "; color: var(--ok); }
+.match .btn { justify-self: start; margin-top: 4px; }
+
+/* ---------- Finais felizes ---------- */
+section.stories { padding: 56px 0 8px; margin-top: 48px; border-top: 1px solid var(--line); }
+.story-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.story { margin: 0; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 18px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.story-art { position: relative; display: grid; place-items: end center; height: 150px; border-radius: 12px; overflow: hidden; background: radial-gradient(circle at 50% 110%, rgb(255 178 62 / 0.18), transparent 70%), var(--panel-2); }
+.story-art svg { width: 150px; height: auto; margin-bottom: -8px; }
+.story-art .mono { position: absolute; top: 10px; left: 12px; font-size: 11px; }
+.story blockquote { margin: 0; font-size: 16px; line-height: 1.5; flex: 1; }
+.story figcaption { display: grid; gap: 2px; font-size: 14px; }
+.story figcaption b { font-family: var(--display); font-size: 15px; }
+.story figcaption span { color: var(--ink-soft); }
+
+/* ---------- Ficha: perfil e compartilhar ---------- */
+.sheet-profile { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px; border-radius: 12px; background: var(--panel-2); }
+.share-row .mono { flex: 1 1 100%; text-transform: none; letter-spacing: 0; font-size: 13px; }
+.swap { display: inline-grid; }
+.swap > span { grid-area: 1 / 1; transition: opacity 150ms ease; }
+.swap > span + span { opacity: 0; }
+.copied .swap > span:first-child { opacity: 0; }
+.copied .swap > span + span { opacity: 1; }
+
+/* ---------- Etapas da adoção ---------- */
+section.how { padding-block: 56px 16px; margin-top: 40px; border-top: 1px solid var(--line); }
+section.how .section-title { margin-bottom: 32px; }
+ol.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+ol.steps li { display: flex; flex-direction: column; gap: 10px; padding-top: 22px; border-top: 1px solid var(--line); position: relative; }
+ol.steps li::before { content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--void); box-shadow: inset 0 0 0 2px var(--eye); }
+ol.steps h3 { font-size: 16px; }
+ol.steps p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+ol.steps a { color: var(--ink); }
+
+/* ---------- Chamada "Sete vidas" ---------- */
+.teaser {
+  position: relative; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 32px;
+  margin-top: 64px; padding: 32px 32px 64px; border-radius: 24px; overflow: hidden; text-decoration: none; isolation: isolate;
+  background: radial-gradient(700px 300px at 0% 100%, rgb(255 79 139 / 0.3), transparent 70%),
+              radial-gradient(600px 300px at 100% 0%, rgb(255 138 61 / 0.18), transparent 70%), var(--panel);
+  box-shadow: inset 0 0 0 1px rgb(255 79 139 / 0.35);
+}
+.teaser-vii {
+  font: 700 clamp(84px, 13vw, 150px)/0.8 var(--display); letter-spacing: -0.045em;
+  background: linear-gradient(100deg, #FF4F8B, #FF8A3D 45%, var(--eye) 70%, var(--iris)); background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  transition: background-position 700ms var(--ease-out);
+}
+.teaser-copy { display: grid; gap: 8px; }
+.teaser-copy b { font: 700 clamp(20px, 2.8vw, 30px)/1.1 var(--display); letter-spacing: -0.02em; }
+.teaser-go { display: inline-flex; align-items: center; gap: 8px; color: var(--eye); font-weight: 600; }
+.teaser-go svg { width: 18px; height: 18px; transition: transform 250ms var(--ease-out); }
+.marquee { position: absolute; left: 0; bottom: 18px; display: flex; width: max-content; white-space: nowrap; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--ink-soft); opacity: 0.6; transform: translateX(calc(var(--mq, 0) * -1px)); }
+.marquee span { padding-right: 0.6em; }
+@media (hover: hover) and (pointer: fine) {
+  .teaser:hover .teaser-vii { background-position: 100% 0; }
+  .teaser:hover .teaser-go svg { transform: translateX(4px); }
+}
+
+/* Inclinação do scanner acompanhando o cursor (js/main.js) */
+.scanner { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--sy, 0px)); transition: transform 400ms var(--ease-out); }
+
+/* ---------- Ficha do gato (modal) ---------- */
+dialog.sheet {
+  width: min(680px, calc(100% - 32px)); max-height: calc(100% - 48px);
+  padding: 0; border: 0; border-radius: 20px; background: var(--panel); color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line), 0 40px 100px -20px rgb(0 0 0 / 0.8);
+  transform-origin: center; /* modal: não ancorado a um gatilho */
+  opacity: 0; transform: scale(0.96);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out),
+    overlay 200ms var(--ease-out) allow-discrete, display 200ms var(--ease-out) allow-discrete;
+}
+dialog.sheet[open] { opacity: 1; transform: scale(1); transition-duration: 250ms; }
+@starting-style { dialog.sheet[open] { opacity: 0; transform: scale(0.96); } }
+dialog.sheet::backdrop {
+  background-color: rgb(4 5 12 / 0);
+  transition: background-color 200ms var(--ease-out), overlay 200ms var(--ease-out) allow-discrete, display 200ms var(--ease-out) allow-discrete;
+}
+dialog.sheet[open]::backdrop { background-color: rgb(4 5 12 / 0.72); transition-duration: 250ms; }
+@starting-style { dialog.sheet[open]::backdrop { background-color: rgb(4 5 12 / 0); } }
+/* Quando a View Transition conduz o morph, a transição própria do dialog sai da frente */
+dialog.sheet.vt, dialog.sheet.vt::backdrop { transition: none; }
+
+::view-transition-group(cat-photo) { animation-duration: 420ms; animation-timing-function: var(--ease-in-out); }
+::view-transition-old(cat-photo), ::view-transition-new(cat-photo) { height: 100%; object-fit: cover; animation-duration: 420ms; animation-timing-function: var(--ease-in-out); }
+
+.sheet-head { display: grid; grid-template-columns: 220px 1fr; gap: 20px; padding: 20px 20px 0; align-items: end; }
+.sheet-head .photo { aspect-ratio: 5 / 4; border-radius: 12px; }
+.sheet-head h2 { font-size: 30px; letter-spacing: -0.02em; line-height: 1.05; margin-top: 6px; }
+.sheet-head .meta { margin-top: 8px; color: var(--ink-soft); }
+.x { position: absolute; top: 12px; right: 12px; z-index: 2; width: 40px; height: 40px; border-radius: 12px; border: 0; cursor: pointer;
+     background: var(--panel-2); color: var(--ink); font-size: 20px; line-height: 1; transition: transform 160ms var(--ease-out); }
+.x:active { transform: scale(0.97); }
+.sheet-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+.sheet-body > p { margin: 0; color: var(--ink-soft); }
+dl.ficha { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 0; border-radius: 12px; overflow: hidden; background: var(--line); }
+dl.ficha div { background: var(--panel-2); padding: 10px 12px; }
+dl.ficha dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+dl.ficha dd { margin: 4px 0 0; font-family: var(--mono); font-size: 13px; }
+
+form.adopt { display: grid; gap: 14px; }
+form.adopt h3 { font-size: 17px; }
+form.adopt .btn-wa { justify-self: start; }
+
+/* Sucesso — o momento raro em que um pouco de encanto é merecido */
+.done { display: grid; justify-items: start; gap: 10px; transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); }
+@starting-style { .done { opacity: 0; transform: translateY(8px); } }
+.badge { position: relative; width: 56px; height: 56px; }
+.badge svg { width: 100%; height: 100%; position: relative; }
+.badge circle { fill: rgb(91 224 166 / 0.12); stroke: var(--ok); stroke-width: 1.5; }
+.badge path { fill: none; stroke: var(--ok); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round;
+              stroke-dasharray: 40; stroke-dashoffset: 0; transition: stroke-dashoffset 450ms var(--ease-out) 120ms; }
+@starting-style { .badge path { stroke-dashoffset: 40; } }
+.badge::before { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 2px var(--ok);
+                 opacity: 0; animation: ping 700ms var(--ease-out) 120ms; }
+@keyframes ping { from { opacity: 0.6; transform: scale(0.9); } to { opacity: 0; transform: scale(1.7); } }
+.done h3 { font-size: 20px; }
+.done p { margin: 0; color: var(--ink-soft); }
+.done .cta-row { margin-top: 6px; }
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    .card, .done { transform: none; }
+    dialog.sheet[open] { transform: none; }
+  }
+  .card { transition-delay: 0ms; }
+  dialog.sheet { transform: none; }
+  .br, .card-inner:hover .br { transform: none; }
+  .x:active { transform: none; }
+  .badge path { transition: none; }
+  .match-q, .match-result, .match { transition: opacity 200ms ease; }
+  @starting-style { .match-q, .match-result, .match { transform: none; } }
+  .chip-toggle:active, .match-opt:active { transform: none; }
+  .badge::before { animation: none; }
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 880px) {
+  .hero { grid-template-columns: 1fr; padding-block: 36px 24px; gap: 32px; }
+  .scanner { max-width: 520px; }
+  ol.steps { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
+  .match-list, .story-list { grid-template-columns: 1fr; }
+  .match { grid-template-columns: 38% 1fr; grid-template-rows: none; }
+  .match .photo { aspect-ratio: auto; min-height: 100%; }
+}
+@media (max-width: 560px) {
+  ol.steps { grid-template-columns: 1fr; }
+  .match-wrap { padding: 20px; }
+  .match { grid-template-columns: 1fr; }
+  .match .photo { aspect-ratio: 16 / 10; min-height: 0; }
+  .sort { width: 100%; justify-content: space-between; }
+  .sheet-head { grid-template-columns: 1fr; padding: 16px 16px 0; }
+  .sheet-body { padding: 16px; }
+  dl.ficha { grid-template-columns: repeat(2, 1fr); }
+  .readouts b { font-size: 12.5px; }
+}

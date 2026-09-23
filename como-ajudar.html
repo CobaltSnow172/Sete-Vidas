@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Apadrinhe um gato, seja lar temporário, faça voluntariado ou doe para o Sete Vidas, em Teresina (PI).">
+  <title>Como ajudar · Sete Vidas</title>
+  <meta name="theme-color" content="#07090F">
+  <!-- Prévia ao compartilhar. Depois de publicar, troque og:image por um endereço completo (https://...) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Sete Vidas">
+  <meta property="og:title" content="Como ajudar · Sete Vidas">
+  <meta property="og:description" content="Apadrinhe, seja lar temporário, faça voluntariado ou doe. Tudo começa com uma mensagem.">
+  <meta property="og:image" content="photos/nanquim-1600.jpg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pages.css">
+
+  <script src="js/config.js" defer></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/ambient.js" defer></script>
+  <script src="js/help.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="index.html" aria-label="Sete Vidas — início">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 27V9l6 5h10l6-5v18z" fill="none" stroke="var(--eye)" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="12" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+          <ellipse cx="20" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+        </svg>
+        SETE VIDAS
+      </a>
+      <nav class="links" aria-label="Principal">
+        <a href="index.html#gatos">Adotar</a>
+        <a href="antes-de-adotar.html">Antes de adotar</a>
+        <a href="como-ajudar.html" aria-current="page">Como ajudar</a>
+        <a class="new" href="sete-vidas.html">Sete vidas</a>
+      </nav>
+      <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e quero ajudar.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+        WhatsApp
+      </a>
+    </header>
+
+    <main id="conteudo" tabindex="-1">
+      <section class="page-hero">
+        <div>
+          <p class="mono fade-in" style="--d:0">Como ajudar</p>
+          <h1>
+            <span class="ln"><span style="--d:1">Nem todo mundo</span></span>
+            <span class="ln"><span style="--d:2">pode adotar.</span></span>
+            <span class="ln"><span style="--d:3" class="hot">Todo mundo ajuda.</span></span>
+          </h1>
+        </div>
+        <p class="lede fade-in" style="--d:4">O abrigo funciona com padrinhos, lares temporários e voluntários. Escolha o jeito que cabe na sua rotina — tudo começa com uma mensagem.</p>
+      </section>
+
+      <nav class="toc" aria-label="Nesta página">
+        <a href="#formas">Formas de ajudar</a>
+        <a href="#faltando">O que está faltando</a>
+        <a href="#transparencia">Para onde vai o dinheiro</a>
+        <a href="#gato-na-rua">Gato na rua</a>
+      </nav>
+
+      <!-- Formas de ajudar -->
+      <section class="block" id="formas" aria-labelledby="formas-h">
+        <div class="section-head reveal">
+          <div>
+            <p class="mono">4 caminhos</p>
+            <h2 class="section-title" id="formas-h">Formas de ajudar</h2>
+          </div>
+        </div>
+        <div class="ways">
+          <article class="way featured reveal">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></span>
+            <h3>Apadrinhe um gato</h3>
+            <p>Uma contribuição mensal para os custos de um gato até ele ser adotado. Você recebe fotos e notícias dele.</p>
+            <div class="amount">
+              <div class="seg" id="sponsor-seg" role="group" aria-label="Valor mensal"></div>
+              <p class="impact" id="sponsor-impact" aria-live="polite"></p>
+            </div>
+            <div><a class="btn btn-primary" id="sponsor-cta" href="https://wa.me/5586999971151" data-wa="Olá! Quero apadrinhar um gato do Sete Vidas.">Quero apadrinhar</a></div>
+          </article>
+
+          <article class="way reveal">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span>
+            <h3>Seja lar temporário</h3>
+            <p>Receba um gato em casa enquanto ele espera adoção. O abrigo paga ração, areia e veterinário.</p>
+            <ul>
+              <li>Um cômodo com tela nas janelas</li>
+              <li>De 2 semanas a alguns meses</li>
+              <li>Ideal para filhotes e gatos em recuperação</li>
+            </ul>
+            <a class="btn btn-ghost" href="https://wa.me/5586999971151" data-wa="Olá! Quero ser lar temporário do Sete Vidas. Como funciona?">Quero ser lar temporário</a>
+          </article>
+
+          <article class="way reveal">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V7a2 2 0 0 1 4 0v3M11 10V5a2 2 0 0 1 4 0v5M15 10V7a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-.5A6.5 6.5 0 0 1 5 16.5L3.5 13a2 2 0 0 1 3.5-2z"/></svg></span>
+            <h3>Seja voluntário</h3>
+            <p>Algumas horas por mês já fazem diferença. As tarefas mais pedidas:</p>
+            <ul>
+              <li>Feiras de adoção aos sábados</li>
+              <li>Transporte até o veterinário</li>
+              <li>Fotos e vídeos dos gatos</li>
+              <li>Redes sociais e divulgação</li>
+            </ul>
+            <a class="btn btn-ghost" href="https://wa.me/5586999971151" data-wa="Olá! Quero ser voluntário no Sete Vidas.">Quero ser voluntário</a>
+          </article>
+
+          <article class="way reveal">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/></svg></span>
+            <h3>Doe itens</h3>
+            <p>Ração, areia, medicamentos e mantas. Veja abaixo o que está acabando e combine a entrega ou a coleta.</p>
+            <a class="btn btn-ghost" href="https://wa.me/5586999971151" data-wa="Olá! Quero doar itens para o Sete Vidas. Onde posso entregar?">Combinar doação</a>
+          </article>
+        </div>
+      </section>
+
+      <!-- O que está faltando + PIX -->
+      <section class="block" id="faltando" aria-labelledby="falt-h">
+        <div class="split">
+          <div>
+            <p class="mono">Estoque do abrigo</p>
+            <h2 class="section-title" id="falt-h">O que está faltando</h2>
+            <p class="section-lede">Barras em vermelho são prioridade. Doações em dinheiro compram o que estiver mais baixo.</p>
+            <ul class="needs" style="margin-top: 24px;">
+              <li><b>Areia higiênica</b><span class="lvl low">20%</span><span class="meter low"><i style="--v:.2; --i:0"></i></span></li>
+              <li><b>Antipulgas</b><span class="lvl low">15%</span><span class="meter low"><i style="--v:.15; --i:1"></i></span></li>
+              <li><b>Ração para filhotes</b><span class="lvl">35%</span><span class="meter"><i style="--v:.35; --i:2"></i></span></li>
+              <li><b>Ração renal para idosos</b><span class="lvl">60%</span><span class="meter"><i style="--v:.6; --i:3"></i></span></li>
+              <li><b>Mantas e toalhas</b><span class="lvl">75%</span><span class="meter"><i style="--v:.75; --i:4"></i></span></li>
+            </ul>
+          </div>
+          <div class="pix reveal">
+            <p class="mono">Doação em dinheiro</p>
+            <h3>PIX</h3>
+            <p class="hint">Qualquer valor ajuda. Mande o comprovante no WhatsApp se quiser recibo.</p>
+            <!-- Mostrado quando SITE.pixKey (js/config.js) está preenchida -->
+            <div class="pix-key" id="pix-key">
+              <code></code>
+              <button class="btn btn-ghost btn-sm" type="button">
+                <span class="swap"><span>Copiar chave</span><span>Copiada</span></span>
+              </button>
+            </div>
+            <!-- Mostrado quando não há chave configurada -->
+            <div id="pix-ask" hidden>
+              <a class="btn btn-wa" href="https://wa.me/5586999971151" data-wa="Olá! Quero fazer uma doação para o Sete Vidas. Qual é a chave PIX?">Pedir a chave PIX</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transparência -->
+      <section class="block" id="transparencia" aria-labelledby="tr-h">
+        <div class="split">
+          <div>
+            <p class="mono">Transparência</p>
+            <h2 class="section-title" id="tr-h">Para onde vai o dinheiro</h2>
+            <p class="section-lede">Como as doações são usadas, em média. A prestação de contas detalhada é enviada a quem pedir pelo WhatsApp.</p>
+          </div>
+          <div>
+            <div class="stack" role="img" aria-label="Veterinário e castração 45%, ração e areia 35%, vacinas e testes 15%, transporte 5%">
+              <i style="--w:45; background: var(--iris)"></i>
+              <i style="--w:35; background: var(--eye)"></i>
+              <i style="--w:15; background: var(--ok)"></i>
+              <i style="--w:5; background: var(--ink-soft)"></i>
+            </div>
+            <ul class="legend">
+              <li style="--c: var(--iris)">Veterinário e castração <span>45%</span></li>
+              <li style="--c: var(--eye)">Ração e areia <span>35%</span></li>
+              <li style="--c: var(--ok)">Vacinas e testes FIV/FeLV <span>15%</span></li>
+              <li style="--c: var(--ink-soft)">Transporte <span>5%</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gato na rua / maus-tratos -->
+      <section class="block" id="gato-na-rua" aria-labelledby="rua-h">
+        <div class="section-head reveal">
+          <div>
+            <p class="mono">Orientação</p>
+            <h2 class="section-title" id="rua-h">Encontrou um gato na rua?</h2>
+            <p class="section-lede">O abrigo tem vagas limitadas, mas sempre orientamos. Veja o que fazer primeiro.</p>
+          </div>
+        </div>
+        <div class="guide reveal">
+          <article>
+            <h3>Gato perdido ou abandonado</h3>
+            <ol>
+              <li><strong>Veja se ele tem dono:</strong> coleira, plaquinha ou microchip (qualquer clínica lê).</li>
+              <li><strong>Tire fotos e anote o local</strong> onde ele foi encontrado.</li>
+              <li><strong>Ofereça água e abrigo</strong> numa caixa de transporte, se ele deixar.</li>
+              <li><strong>Mande as fotos para a gente</strong> — divulgamos e ajudamos a achar lar temporário.</li>
+            </ol>
+            <p style="margin: 16px 0 0;"><a class="btn btn-ghost btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Encontrei um gato na rua e preciso de orientação. Vou mandar fotos e o local.">Enviar fotos pelo WhatsApp</a></p>
+          </article>
+          <article class="alert">
+            <h3>Maus-tratos são crime</h3>
+            <ul>
+              <li>Maltratar cães e gatos dá <strong>reclusão de 2 a 5 anos</strong>, multa e proibição da guarda (Lei 14.064/2020).</li>
+              <li>Se está acontecendo agora, <strong>ligue <span class="phone">190</span></strong> (Polícia Militar).</li>
+              <li>Registre um <strong>boletim de ocorrência</strong> na delegacia, com fotos, vídeos e endereço.</li>
+              <li>Você pode denunciar também ao <strong>Ministério Público</strong> do seu estado.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="cta-band reveal" aria-labelledby="cta-h">
+        <div>
+          <h2 id="cta-h">Prefere adotar?</h2>
+          <p>Oito gatos castrados e vacinados esperam uma casa com tela.</p>
+        </div>
+        <a class="btn btn-primary" href="index.html#gatos">Ver gatos disponíveis</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand" href="index.html">SETE VIDAS</a>
+        <p>Lar temporário independente em Teresina, PI. Castramos, vacinamos e acompanhamos cada adoção.</p>
+      </div>
+      <div>
+        <p class="mono">Páginas</p>
+        <ul>
+          <li><a href="index.html#gatos">Gatos para adoção</a></li>
+          <li><a href="antes-de-adotar.html">Antes de adotar</a></li>
+          <li><a href="como-ajudar.html">Como ajudar</a></li>
+          <li><a href="sete-vidas.html">Sete vidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono">Contato</p>
+        <ul>
+          <li><a href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas."><span data-wa-display>(86) 99997-1151</span> · WhatsApp</a></li>
+          <li><a href="#gato-na-rua">Encontrou um gato na rua?</a></li>
+        </ul>
+      </div>
+      <p class="mono fine">Fotos dos gatos ilustrativas, via TheCatAPI</p>
+    </footer>
+  </div>
+</body>
+</html>

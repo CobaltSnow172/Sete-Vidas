@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Sete Vidas — lar temporário de gatos em Teresina (PI). Adoção responsável de gatos castrados, vacinados e testados.">
+  <title>Sete Vidas · Adoção de gatos</title>
+  <meta name="theme-color" content="#07090F">
+  <!-- Prévia ao compartilhar (WhatsApp, Instagram). Depois de publicar, troque og:image por um endereço completo (https://...) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Sete Vidas">
+  <meta property="og:title" content="Sete Vidas · Oito gatos procurando uma casa">
+  <meta property="og:description" content="Lar temporário em Teresina (PI). Gatos castrados, vacinados e testados, com acompanhamento de 30 dias.">
+  <meta property="og:image" content="photos/tangerina-1600.jpg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+
+  <!-- Ordem importa: cada arquivo usa o que os anteriores definem -->
+  <script src="js/config.js" defer></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/ambient.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/illustration.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/catalog.js" defer></script>
+  <script src="js/match.js" defer></script>
+  <script src="js/modal.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="index.html" aria-label="Sete Vidas — início">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 27V9l6 5h10l6-5v18z" fill="none" stroke="var(--eye)" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="12" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+          <ellipse cx="20" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+        </svg>
+        SETE VIDAS
+      </a>
+      <nav class="links" aria-label="Principal">
+        <a href="index.html#gatos" aria-current="page">Adotar</a>
+        <a href="antes-de-adotar.html">Antes de adotar</a>
+        <a href="como-ajudar.html">Como ajudar</a>
+        <a class="new" href="sete-vidas.html">Sete vidas</a>
+      </nav>
+      <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e tenho uma dúvida.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+        WhatsApp
+      </a>
+    </header>
+
+    <main id="conteudo" tabindex="-1">
+      <!-- Topo -->
+      <section class="hero">
+        <div>
+          <p class="mono fade-in" style="--d:0">Lar temporário · Teresina, PI</p>
+          <h1>
+            <span class="ln"><span style="--d:1">Oito gatos</span></span>
+            <span class="ln"><span style="--d:2">procurando</span></span>
+            <span class="ln"><span style="--d:3" class="hot">uma casa.</span></span>
+          </h1>
+          <p class="lede fade-in" style="--d:4">Todos castrados, vacinados, microchipados e testados para FIV e FeLV. Você escolhe, a gente conversa, e o gato vai para casa com acompanhamento de 30 dias.</p>
+          <div class="cta-row fade-in" style="--d:5">
+            <a class="btn btn-primary" href="#gatos">Conhecer os gatos</a>
+            <a class="btn btn-ghost" href="antes-de-adotar.html">Antes de adotar</a>
+          </div>
+        </div>
+        <!-- Preenchido por js/catalog.js → renderScanner() -->
+        <div class="scanner fade-in" style="--d:2" id="scanner"></div>
+      </section>
+
+      <!-- Quiz: qual gato combina (preenchido por js/match.js) -->
+      <section class="match-wrap reveal" id="combina" aria-labelledby="match-h">
+        <div id="match"></div>
+      </section>
+
+      <!-- Gatos -->
+      <section class="cats" id="gatos" aria-labelledby="gatos-h">
+        <div class="section-head">
+          <div>
+            <p class="mono" id="count">8 gatos disponíveis</p>
+            <h2 class="section-title" id="gatos-h">Quem está esperando</h2>
+          </div>
+          <!-- Preenchido por js/catalog.js → initFilter() -->
+          <div class="seg" id="seg" role="group" aria-label="Filtrar por idade"></div>
+        </div>
+        <!-- Preenchidos por js/catalog.js → initFilter() e renderGrid() -->
+        <div class="filters" id="filters"></div>
+        <div class="grid" id="grid"></div>
+        <div class="empty" id="empty" hidden>
+          <p>Nenhum gato com todos esses filtros agora. Novos gatos chegam toda semana.</p>
+          <button class="btn btn-ghost btn-sm" type="button" id="empty-reset">Limpar filtros</button>
+        </div>
+      </section>
+
+      <!-- Como adotar -->
+      <section class="how" id="como-adotar" aria-labelledby="how-h">
+        <p class="mono">Processo · 4 etapas</p>
+        <h2 class="section-title reveal" id="how-h">Como a adoção funciona</h2>
+        <ol class="steps">
+          <li class="reveal"><span class="mono">Etapa 1</span><h3>Manifeste interesse</h3><p>Escolha um gato, preencha a ficha e envie pelo WhatsApp. Leva dois minutos.</p></li>
+          <li class="reveal"><span class="mono">Etapa 2</span><h3>Videochamada</h3><p>Conversamos sobre a rotina da casa e vemos as janelas. Tela de proteção é obrigatória.</p></li>
+          <li class="reveal"><span class="mono">Etapa 3</span><h3>Termo e taxa</h3><p>Você assina o termo de adoção responsável. A taxa de R$ 80 cobre parte da castração e das vacinas. <a href="antes-de-adotar.html#requisitos">Ver requisitos</a></p></li>
+          <li class="reveal"><span class="mono">Etapa 4</span><h3>Chegada em casa</h3><p>Levamos o gato na caixa de transporte e acompanhamos a adaptação por 30 dias.</p></li>
+        </ol>
+      </section>
+
+      <!-- Finais felizes (preenchido por js/main.js a partir de ADOPTED em js/data.js) -->
+      <section class="stories" id="adotados" aria-labelledby="stories-h">
+        <div class="section-head reveal">
+          <div>
+            <p class="mono">Finais felizes</p>
+            <h2 class="section-title" id="stories-h">Quem já foi para casa</h2>
+          </div>
+          <p class="section-lede">Depois da adoção, a equipe acompanha os primeiros 30 dias. Algumas mensagens que recebemos nesse período.</p>
+        </div>
+        <div class="story-list" id="stories"></div>
+      </section>
+
+      <!-- Chamada para a página "Sete vidas" -->
+      <a class="teaser reveal" href="sete-vidas.html" aria-labelledby="teaser-h">
+        <span class="teaser-vii" aria-hidden="true">VII</span>
+        <span class="teaser-copy">
+          <span class="mono">Novo · Sete vidas</span>
+          <b id="teaser-h">Da rua ao sofá, em sete capítulos.</b>
+          <span class="teaser-go">Assistir à história <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="marquee" aria-hidden="true"><span>A RUA · O RESGATE · A CLÍNICA · O LAR TEMPORÁRIO · A FOTO NO SITE · A CONVERSA · UM SOFÁ PARA SEMPRE · </span><span>A RUA · O RESGATE · A CLÍNICA · O LAR TEMPORÁRIO · A FOTO NO SITE · A CONVERSA · UM SOFÁ PARA SEMPRE · </span></span>
+      </a>
+
+      <section class="cta-band reveal" aria-labelledby="cta-h">
+        <div>
+          <h2 id="cta-h">Não dá para adotar agora?</h2>
+          <p>Apadrinhe um gato, seja lar temporário ou doe itens que estão faltando.</p>
+        </div>
+        <a class="btn btn-primary" href="como-ajudar.html">Ver formas de ajudar</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand" href="index.html">SETE VIDAS</a>
+        <p>Lar temporário independente em Teresina, PI. Castramos, vacinamos e acompanhamos cada adoção.</p>
+      </div>
+      <div>
+        <p class="mono">Páginas</p>
+        <ul>
+          <li><a href="index.html#gatos">Gatos para adoção</a></li>
+          <li><a href="antes-de-adotar.html">Antes de adotar</a></li>
+          <li><a href="como-ajudar.html">Como ajudar</a></li>
+          <li><a href="sete-vidas.html">Sete vidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono">Contato</p>
+        <ul>
+          <li><a href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas."><span data-wa-display>(86) 99997-1151</span> · WhatsApp</a></li>
+          <li><a href="como-ajudar.html#gato-na-rua">Encontrou um gato na rua?</a></li>
+        </ul>
+      </div>
+      <p class="mono fine">Fotos dos gatos ilustrativas, via TheCatAPI. Histórias de adoção de exemplo.</p>
+    </footer>
+  </div>
+
+  <!-- Ficha do gato — conteúdo gerado por js/modal.js -->
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-name">
+    <div id="sheet-content"></div>
+  </dialog>
+</body>
+</html>

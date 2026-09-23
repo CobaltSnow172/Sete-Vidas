@@ -1,0 +1,281 @@
+/* ==========================================================================
+   "Sete vidas" — página cinematográfica guiada pela rolagem.
+   Cada seção alta tem um palco "sticky"; js/vidas.js escreve o progresso
+   da rolagem em --p (0 → 1) e o CSS transforma a partir dele.
+   Depende de base.css (tokens) e home.css (bloco .photo).
+   ========================================================================== */
+
+:root {
+  --dusk-1: #FF4F8B;  /* rosa pôr do sol */
+  --dusk-2: #FF8A3D;  /* laranja */
+  --dusk-3: #8F7BFF;  /* íris (mesmo token do site) */
+  --sunset: linear-gradient(100deg, var(--dusk-1), var(--dusk-2) 45%, var(--eye) 70%, var(--dusk-3));
+}
+
+body.vidas { padding-inline: 0; background: var(--void); overflow-x: clip; }
+body.vidas .wrap { padding-inline: 20px; }
+body.vidas header.top {
+  position: fixed; inset: 0 0 auto; z-index: 20; max-width: none; padding-inline: max(20px, calc((100% - 1140px) / 2));
+  border-bottom-color: transparent; background: linear-gradient(rgb(7 9 15 / 0.75), transparent);
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+body.vidas header.top.solid { background-color: rgb(7 9 15 / 0.94); border-bottom-color: var(--line); }
+
+/* ---------- Céu que muda com a rolagem da página (--page-p) ---------- */
+.sky { position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--void); }
+.sky i { position: absolute; inset: 0; }
+/* Duas camadas só: noite (com as manchas de cor já no gradiente) e o pôr do sol que aparece no fim */
+.sky .night {
+  background:
+    radial-gradient(1000px 600px at 80% -10%, rgb(143 123 255 / 0.22), transparent 70%),
+    radial-gradient(45vmax 45vmax at 5% 45%, rgb(143 123 255 / 0.14), transparent 70%),
+    radial-gradient(45vmax 45vmax at 100% 85%, rgb(255 79 139 / 0.1), transparent 70%);
+}
+.sky .dusk {
+  opacity: calc(var(--page-p, 0) * 1.4 - 0.2);
+  background:
+    radial-gradient(1200px 700px at 20% 110%, rgb(255 79 139 / 0.28), transparent 65%),
+    radial-gradient(900px 600px at 90% 100%, rgb(255 138 61 / 0.22), transparent 65%);
+}
+/* Granulado de filme: só na abertura (o "trailer"), não na página inteira */
+.grain {
+  position: absolute; inset: -8%; z-index: 5; pointer-events: none; opacity: 0.06; will-change: transform;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 800ms steps(4) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(1%, 3%); }
+}
+
+/* ---------- Palco fixo genérico ---------- */
+.scene { position: relative; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+
+/* ---------- 1. Abertura: zoom através do logo ---------- */
+.v-hero { height: 320vh; }
+.collage {
+  position: absolute; inset: -6%; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); grid-auto-flow: dense; gap: 10px;
+  transform: scale(calc(1.45 - var(--collage, 0) * 0.45)) rotate(-4deg);
+  will-change: transform;
+}
+.collage .photo { border-radius: 10px; }
+.collage .photo:nth-child(1) { grid-row: span 2; }
+.collage .photo:nth-child(4) { grid-column: span 2; }
+.collage .photo:nth-child(6) { grid-row: span 2; }
+.collage .photo:nth-child(8) { grid-column: span 2; }
+.collage::after { content: ""; position: absolute; inset: 0; background: radial-gradient(closest-side, rgb(7 9 15 / calc(0.2 + var(--lock, 0) * 0.65)), rgb(7 9 15 / calc(0.1 + var(--lock, 0) * 0.35))), linear-gradient(180deg, rgb(7 9 15 / 0.1), rgb(7 9 15 / 0.7)); }
+.collage .photo > svg { width: 60%; }
+
+.mask-layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mask-layer text { font-family: var(--display); font-weight: 700; letter-spacing: -0.04em; }
+/* Contorno com espessura fixa na tela, qualquer que seja o zoom */
+.mask-outline { fill: none; stroke: url(#sunset-stroke); stroke-width: 1.4px; vector-effect: non-scaling-stroke; }
+
+.lockup {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; padding: 20px;
+  opacity: var(--lock, 0); transform: translateY(calc((1 - var(--lock, 0)) * 40px)) scale(calc(0.94 + var(--lock, 0) * 0.06));
+}
+.lockup .kicker { color: var(--ink); opacity: 0.8; }
+.logo-vii {
+  display: block; font: 700 clamp(96px, 22vw, 260px)/0.82 var(--display); letter-spacing: -0.045em; margin: 10px 0 0;
+  background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 16px 30px rgb(0 0 0 / 0.6));
+}
+.logo-words { display: block; font: 700 clamp(18px, 3vw, 30px)/1 var(--display); letter-spacing: 0.32em; margin-top: 12px; padding-left: 0.32em; }
+.lockup .tagline { max-width: 40ch; color: var(--ink-soft); margin: 18px 0 24px; font-size: 17px; }
+
+.scroll-hint {
+  position: absolute; left: 50%; bottom: 28px; translate: -50% 0; display: grid; justify-items: center; gap: 8px;
+  opacity: calc(1 - var(--p, 0) * 12);
+}
+.scroll-hint i { width: 22px; height: 34px; border-radius: 12px; box-shadow: inset 0 0 0 1.5px var(--ink-soft); position: relative; }
+.scroll-hint i::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--eye); animation: wheel 1.6s var(--ease-in-out) infinite; }
+@keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+
+/* ---------- 2. Protagonistas ---------- */
+.v-char { height: 260vh; }
+.v-char .stage { display: grid; align-items: center; }
+/* A foto ocupa o lado oposto ao texto: o gato fica inteiro à vista, não embaixo das letras */
+.char-photo {
+  position: absolute; inset: 0 0 0 34%; margin: 0;
+  clip-path: inset(calc((1 - var(--in, 0)) * 18%) calc((1 - var(--in, 0)) * 22%) round calc((1 - var(--in, 0)) * 28px));
+}
+.v-char.right .char-photo { inset: 0 34% 0 0; }
+.char-photo .photo { position: absolute; inset: 0; transform: scale(calc(1.3 - var(--in, 0) * 0.3 + var(--out, 0) * 0.08)); }
+.char-photo .photo > svg { width: min(60%, 520px); }
+/* Só a borda que encosta no texto escurece */
+.char-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--void), rgb(7 9 15 / 0.5) 18%, transparent 42%), linear-gradient(0deg, rgb(7 9 15 / 0.55), transparent 30%); }
+.v-char.right .char-photo::after { background: linear-gradient(270deg, var(--void), rgb(7 9 15 / 0.5) 18%, transparent 42%), linear-gradient(0deg, rgb(7 9 15 / 0.55), transparent 30%); }
+
+.char-copy { position: relative; z-index: 2; width: min(1140px, 100% - 40px); margin: 0 auto; }
+.v-char.right .char-copy { display: grid; justify-items: end; text-align: right; }
+.char-copy > * { max-width: 30rem; }
+/* O nome fica na coluna do texto (até a borda escura da foto), sem cobrir o rosto do gato */
+.char-copy > .char-name { max-width: 44vw; padding-right: 0.06em; }
+.char-name {
+  font-size: clamp(48px, 6.4vw, 104px); line-height: 0.95; letter-spacing: -0.035em; margin: 12px 0 0;
+  background: var(--sunset);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.char-copy .rise { opacity: var(--txt, 0); transform: translateY(calc((1 - var(--txt, 0)) * 30px)); }
+.char-copy .rise:nth-child(2) { transform: translateY(calc((1 - var(--txt, 0)) * 50px)); }
+.char-copy .rise:nth-child(3) { transform: translateY(calc((1 - var(--txt, 0)) * 70px)); }
+.char-copy blockquote { margin: 22px 0 0; font: 500 clamp(18px, 2.2vw, 24px)/1.35 var(--body); color: var(--ink); }
+.char-copy .facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.v-char.right .char-copy .facts { justify-content: flex-end; }
+.char-copy .facts span { font-family: var(--mono); font-size: 12px; padding: 6px 10px; border-radius: 999px; background: rgb(14 18 32 / 0.85); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* Fotos-satélite em parallax */
+.sat { position: absolute; z-index: 3; width: clamp(110px, 12vw, 170px); margin: 0; }
+.sat .photo { aspect-ratio: 4 / 5; border-radius: 14px; box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.8), inset 0 0 0 1px var(--line); }
+.sat figcaption { margin-top: 8px; }
+.sat.s1 { right: 3%; top: 14%; transform: translateY(calc((0.5 - var(--p, 0)) * 60vh)) rotate(4deg); }
+.sat.s2 { left: 30%; bottom: 6%; transform: translateY(calc((0.5 - var(--p, 0)) * 70vh)) rotate(-3deg); }
+/* Some antes de subir até o texto */
+.sat.s2 { opacity: calc(1 - clamp(0, (var(--p, 0) - 0.55) / 0.12, 1)); }
+.v-char.right .sat.s1 { right: auto; left: 3%; }
+/* Com o texto à direita, a segunda foto desce para o canto, longe do botão */
+.v-char.right .sat.s2 { left: auto; right: 4%; bottom: 3%; }
+
+/* ---------- 3. As sete vidas (rolagem horizontal) ---------- */
+.v-lives { height: 640vh; }
+.v-lives .stage { display: grid; grid-template-rows: auto 1fr; grid-template-columns: minmax(0, 1fr); padding-top: 96px; }
+.lives-head { width: min(1140px, 100% - 40px); margin: 0 auto; display: flex; justify-content: space-between; align-items: end; gap: 20px; }
+.lives-count { font: 700 clamp(40px, 6vw, 72px)/1 var(--display); background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.lives-bar { width: min(1140px, 100% - 40px); margin: 18px auto 0; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.lives-bar i { display: block; height: 100%; background: var(--sunset); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.track {
+  display: flex; gap: 24px; align-items: center; padding-inline: max(20px, calc((100vw - 1140px) / 2));
+  width: max-content; transform: translateX(calc(var(--tp, 0) * var(--track-shift, 0px) * -1)); will-change: transform;
+}
+.life {
+  position: relative; flex: none; width: min(78vw, 440px); height: min(58vh, 460px); padding: 28px; border-radius: 24px;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.04), transparent 60%), var(--panel); box-shadow: inset 0 0 0 1px var(--line);
+}
+.life .n {
+  position: absolute; top: -0.12em; right: 14px; font: 700 clamp(140px, 20vw, 220px)/1 var(--display); letter-spacing: -0.045em;
+  color: transparent; -webkit-text-stroke: 1.5px rgb(255 178 62 / 0.35);
+}
+.life .ico { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: rgb(255 178 62 / 0.12); color: var(--eye); margin-bottom: auto; }
+.life .ico svg { width: 28px; height: 28px; }
+.life h3 { font-size: clamp(22px, 2.6vw, 30px); letter-spacing: -0.02em; }
+.life p { margin: 0; color: var(--ink-soft); }
+.life:last-child { background: linear-gradient(160deg, rgb(255 79 139 / 0.25), rgb(255 138 61 / 0.12) 60%, transparent), var(--panel); box-shadow: inset 0 0 0 1px rgb(255 79 139 / 0.5); }
+.life:last-child .n { -webkit-text-stroke-color: rgb(255 79 139 / 0.6); }
+
+/* ---------- 4. Elenco em colunas com parallax ---------- */
+.v-cast { padding-block: 120px 80px; }
+.cast-head { width: min(1140px, 100% - 40px); margin: 0 auto 48px; }
+.cast-head .section-title { font-size: clamp(34px, 6vw, 72px); line-height: 0.95; letter-spacing: -0.04em; }
+.cast-cols { width: min(1140px, 100% - 40px); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: start; }
+.cast-col { display: grid; gap: 18px; transform: translateY(calc(var(--p, 0) * var(--speed, 0) * 1px)); will-change: transform; }
+.cast-col:nth-child(1) { --speed: -80; }
+.cast-col:nth-child(2) { --speed: 60; margin-top: 90px; }
+.cast-col:nth-child(3) { --speed: -140; margin-top: 30px; }
+.cast-card { position: relative; display: block; border-radius: 18px; overflow: hidden; text-decoration: none; box-shadow: inset 0 0 0 1px var(--line); }
+.cast-card .photo { aspect-ratio: 3 / 4; }
+.cast-card .photo img { transition: transform 600ms var(--ease-out); }
+.cast-card .label {
+  position: absolute; inset: auto 0 0; padding: 40px 16px 14px; display: flex; justify-content: space-between; align-items: end; gap: 10px;
+  background: linear-gradient(transparent, rgb(7 9 15 / 0.9));
+}
+.cast-card .label b { font: 700 20px/1.05 var(--display); letter-spacing: -0.01em; }
+@media (hover: hover) and (pointer: fine) {
+  .cast-card:hover .photo img { transform: scale(1.06); }
+  .cast-card:hover .br { opacity: 1; transform: none; }
+}
+.cast-card:focus-visible .br { opacity: 1; transform: none; }
+
+/* ---------- Capítulos: pontos na lateral, o rótulo aparece no atual e ao passar o mouse ---------- */
+.chapters { position: fixed; right: 18px; top: 50%; translate: 0 -50%; z-index: 19; }
+.chapters ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.chapters a { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-height: 28px; padding: 2px 4px; text-decoration: none; }
+.chapters .dot { order: 2; width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-soft); transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms var(--ease-out); }
+.chapters .label {
+  font: 500 11px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); white-space: nowrap;
+  padding: 5px 8px; border-radius: 999px; background: rgb(7 9 15 / 0.85);
+  opacity: 0; transform: translateX(6px); transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.chapters a[aria-current="true"] .dot { background: var(--eye); box-shadow: none; transform: scale(1.3); }
+.chapters a.flash .label, .chapters a:focus-visible .label { opacity: 1; transform: none; }
+@media (hover: hover) and (pointer: fine) { .chapters a:hover .label { opacity: 1; transform: none; } .chapters a:hover .dot { box-shadow: inset 0 0 0 1.5px var(--ink); } }
+.chapters a:focus-visible { outline-offset: 0; }
+
+/* ---------- Papéis de parede ---------- */
+.v-wall { width: min(1140px, 100% - 40px); margin: 0 auto; padding: 80px 0 40px; border-top: 1px solid var(--line); }
+.wall-head { margin-bottom: 32px; }
+.wall-head .section-title { font-size: clamp(30px, 4.6vw, 52px); letter-spacing: -0.03em; }
+.wall-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; }
+.wall-controls { display: grid; gap: 24px; align-content: start; }
+.wall-controls fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
+.wall-controls legend { padding: 0; margin-bottom: 10px; }
+.wall-cats { display: flex; flex-wrap: wrap; gap: 8px; }
+.wall-cat { position: relative; cursor: pointer; }
+.wall-cat input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.wall-cat span {
+  display: inline-block; padding: 9px 13px; border-radius: 999px; font: 500 14px/1 var(--body); color: var(--ink-soft);
+  box-shadow: inset 0 0 0 1px var(--line); transition: color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+.wall-cat input:checked + span { color: #1A0610; background: var(--sunset); box-shadow: none; }
+.wall-cat input:focus-visible + span { outline: 2px solid var(--eye); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .wall-cat input:not(:checked) + span:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-hot); } }
+.wall-controls .btn { justify-self: start; }
+.wall-preview { display: grid; place-items: center; min-height: 420px; padding: 20px; border-radius: 24px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); }
+.wall-preview canvas { display: block; width: auto; height: auto; max-width: 100%; max-height: min(64vh, 620px); border-radius: 18px; box-shadow: 0 30px 60px -24px rgb(0 0 0 / 0.8); background: var(--panel-2); }
+.wall-preview:not(.landscape) canvas { border-radius: 26px; }
+
+/* ---------- 5. Final ---------- */
+.v-end { min-height: 100vh; display: grid; place-content: center; justify-items: center; text-align: center; padding: 120px 20px; position: relative; overflow: hidden; }
+.v-end::before {
+  content: ""; position: absolute; left: 50%; bottom: -40vmax; width: 110vmax; height: 80vmax; translate: -50% 0; border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, rgb(255 138 61 / 0.45), rgb(255 79 139 / 0.25) 45%, transparent);
+  animation: sunrise 9s var(--ease-in-out) infinite alternate;
+}
+@keyframes sunrise { from { transform: translateY(6%) scale(0.96); } to { transform: translateY(0) scale(1.04); } }
+.v-end h2 { font-size: clamp(40px, 8vw, 104px); line-height: 0.92; letter-spacing: -0.035em; }
+.v-end h2 .grad { background: var(--sunset); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.v-end p { max-width: 46ch; color: var(--ink-soft); font-size: 18px; margin: 22px 0 30px; }
+.v-end .cta-row { justify-content: center; }
+.btn-sunset { background: var(--sunset); color: #1A0610; background-size: 150% 100%; transition: background-position 400ms var(--ease-out), transform 160ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .btn-sunset:hover { background-position: 100% 0; } }
+
+/* ---------- Movimento reduzido: tudo estático e legível ---------- */
+.still .v-hero, .still .v-char, .still .v-lives { height: auto; }
+.still .stage { position: relative; height: auto; min-height: 100vh; }
+.still .mask-layer, .still .scroll-hint, .still .sat { display: none; }
+.still .lockup { position: relative; min-height: 100vh; opacity: 1; transform: none; }
+.still .v-hero { --lock: 1; } /* véu escuro atrás do texto, sem depender da rolagem */
+.still .collage { transform: rotate(-4deg); }
+.still .char-photo { clip-path: none; }
+.still .char-photo .photo { transform: none; }
+.still .char-copy .rise { opacity: 1; transform: none; }
+.still .v-lives .stage { padding-block: 96px 48px; }
+.still .track { width: auto; flex-wrap: wrap; transform: none; justify-content: center; padding-top: 24px; }
+.still .lives-bar { display: none; }
+.still .cast-col { transform: none; }
+.still .grain, .still .v-end::before { animation: none; }
+.still .chapters .label, .still .chapters .dot { transition: none; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 760px) {
+  body.vidas header.top { padding-inline: 20px; }
+  .collage { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); }
+  /* No celular a foto fica em cima e o texto embaixo, sem cobrir o rosto */
+  .char-photo, .v-char.right .char-photo { inset: 0 0 36% 0; }
+  .char-photo::after, .v-char.right .char-photo::after { background: linear-gradient(0deg, var(--void), transparent 35%); }
+  .v-char .stage { align-items: end; padding-bottom: 48px; }
+  .v-char.right .char-copy { justify-items: start; text-align: left; }
+  .char-copy > .char-name { max-width: none; }
+  .v-char.right .char-copy .facts { justify-content: flex-start; }
+  /* Tela estreita: as fotos-satélite cobririam o rosto do protagonista */
+  .sat { display: none; }
+  .lives-head { flex-direction: column; align-items: start; }
+  .chapters { display: none; }
+  .wall-grid { grid-template-columns: 1fr; }
+  .wall-preview { min-height: 0; }
+  .cast-cols { grid-template-columns: repeat(2, 1fr); }
+  .cast-col:nth-child(3) { display: contents; }
+  .cast-col:nth-child(2) { margin-top: 60px; }
+}
