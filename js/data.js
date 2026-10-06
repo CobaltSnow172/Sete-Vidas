@@ -77,10 +77,13 @@ function waitLabel(c) {
   const y = Math.max(1, Math.round(d / 365)), m = Math.max(0, Math.round((d - y * 365) / 30));
   return `há ${y} ano${y > 1 ? "s" : ""}` + (m ? ` e ${m} ${m > 1 ? "meses" : "mês"}` : "");
 }
-// Os dois que esperam há mais tempo ganham o selo "Espera longa" (recalculado quando a lista muda)
+// Selo "Espera longa": os dois que esperam há mais tempo, desde que estejam há pelo menos
+// LONG_WAIT_DAYS no lar temporário (com poucos gatos, quem acabou de chegar não ganha o selo)
+const LONG_WAIT_DAYS = 90;
 let LONGEST_WAIT = [];
 function computeLongestWait() {
-  LONGEST_WAIT = [...CATS].sort((a, b) => daysWaiting(b) - daysWaiting(a)).slice(0, 2).map((c) => c.id);
+  LONGEST_WAIT = CATS.filter((c) => daysWaiting(c) >= LONG_WAIT_DAYS)
+    .sort((a, b) => daysWaiting(b) - daysWaiting(a)).slice(0, 2).map((c) => c.id);
 }
 computeLongestWait();
 
