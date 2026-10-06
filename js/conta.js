@@ -76,7 +76,7 @@
     const atual = $("senha-atual").value;
     const s1 = $("nova-senha").value, s2 = $("nova-senha2").value;
     if (!atual) return setFormError(fp, "Escreva a sua senha atual.", $("senha-atual"));
-    if (!validPassword(s1)) return setFormError(fp, "A senha precisa de pelo menos 8 caracteres, com letras e números.", $("nova-senha"));
+    if (!validPassword(s1)) return setFormError(fp, PASSWORD_RULE, $("nova-senha"));
     if (s1 !== s2) return setFormError(fp, "As duas senhas estão diferentes.", $("nova-senha2"));
     if (s1 === atual) return setFormError(fp, "A senha nova precisa ser diferente da atual.", $("nova-senha"));
     setFormError(fp, "");
@@ -99,6 +99,7 @@
     setBusy(btn, false);
     if (error) {
       const code = error.code || "";
+      if (code === "weak_password") return setFormError(fp, PASSWORD_RULE, $("nova-senha"));
       if (code === "same_password") return setFormError(fp, "A senha nova precisa ser diferente da atual.", $("nova-senha"));
       if (code === "reauthentication_needed") return setFormError(fp, "Por segurança, saia e entre de novo antes de trocar a senha.");
       return setFormError(fp, "Não foi possível trocar a senha agora. Tente de novo.");

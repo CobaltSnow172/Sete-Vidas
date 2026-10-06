@@ -113,7 +113,7 @@
     if (nome.length < 2) return setFormError(f, "Escreva o seu nome.", f.nome);
     if (/[<>"`]/.test(nome)) return setFormError(f, "O nome não pode ter os caracteres < > \" `.", f.nome);
     if (!EMAIL_RE.test(email)) return setFormError(f, "Escreva um e-mail válido.", f.email);
-    if (!validPassword(s1)) return setFormError(f, "A senha precisa de pelo menos 8 caracteres, com letras e números.", $("signup-senha"));
+    if (!validPassword(s1)) return setFormError(f, PASSWORD_RULE, $("signup-senha"));
     if (s1 !== s2) return setFormError(f, "As duas senhas estão diferentes.", $("signup-senha2"));
     setFormError(f, "");
     const btn = f.querySelector("[type=submit]");
@@ -126,7 +126,7 @@
     if (error) {
       const code = error.code || "";
       if (code === "user_already_exists" || /already registered/i.test(error.message)) return setFormError(f, "Esse e-mail já tem conta. Entre ou recupere a senha.", f.email);
-      if (code === "weak_password") return setFormError(f, "Essa senha é fácil demais de adivinhar. Escolha outra.", $("signup-senha"));
+      if (code === "weak_password") return setFormError(f, PASSWORD_RULE, $("signup-senha"));
       if (error.status === 429 || code.includes("rate_limit")) return setFormError(f, "Muitos cadastros seguidos. Espere alguns minutos e tente de novo.");
       return setFormError(f, "Não foi possível criar a conta agora. Tente de novo em instantes.");
     }
@@ -165,7 +165,7 @@
     e.preventDefault();
     const f = forms.reset;
     const s1 = $("reset-senha").value, s2 = $("reset-senha2").value;
-    if (!validPassword(s1)) return setFormError(f, "A senha precisa de pelo menos 8 caracteres, com letras e números.", $("reset-senha"));
+    if (!validPassword(s1)) return setFormError(f, PASSWORD_RULE, $("reset-senha"));
     if (s1 !== s2) return setFormError(f, "As duas senhas estão diferentes.", $("reset-senha2"));
     setFormError(f, "");
     const btn = f.querySelector("[type=submit]");
@@ -173,6 +173,7 @@
     const { error } = await sb.auth.updateUser({ password: s1 });
     setBusy(btn, false);
     if (error) {
+      if ((error.code || "") === "weak_password") return setFormError(f, PASSWORD_RULE, $("reset-senha"));
       if ((error.code || "") === "same_password") return setFormError(f, "A senha nova precisa ser diferente da antiga.", $("reset-senha"));
       return setFormError(f, "Não foi possível salvar. Peça um novo link e tente de novo.");
     }

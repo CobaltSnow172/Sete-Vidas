@@ -191,7 +191,10 @@ document.addEventListener("click", (e) => {
 // ---------- Formulários de conta (entrar, minha conta, painel) ----------
 
 const EMAIL_RE = /^[^@\s<>"'`]+@[^@\s<>"'`]+\.[^@\s<>"'`]+$/;
-const validPassword = (p) => p.length >= 8 && p.length <= 72 && /[a-zA-Z]/.test(p) && /\d/.test(p);
+// Regra de senha (cadastro, nova senha e troca): 8+ caracteres, 1 maiúscula, 1 número, 1 especial.
+// Espaço não conta como especial; letras acentuadas contam como letras.
+const PASSWORD_RULE = "A senha precisa de pelo menos 8 caracteres, com 1 letra maiúscula, 1 número e 1 caractere especial (como ! @ # $ %).";
+const validPassword = (p) => p.length >= 8 && p.length <= 72 && /\p{Lu}/u.test(p) && /\p{N}/u.test(p) && /[^\p{L}\p{N}\s]/u.test(p);
 
 function setFormError(form, msg, field) {
   const box = form.querySelector(".error");
