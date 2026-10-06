@@ -73,12 +73,28 @@
   const fp = $("form-password");
   fp.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const atual = $("senha-atual").value;
     const s1 = $("nova-senha").value, s2 = $("nova-senha2").value;
+    if (!atual) return setFormError(fp, "Escreva a sua senha atual.", $("senha-atual"));
     if (!validPassword(s1)) return setFormError(fp, "A senha precisa de pelo menos 8 caracteres, com letras e números.", $("nova-senha"));
     if (s1 !== s2) return setFormError(fp, "As duas senhas estão diferentes.", $("nova-senha2"));
+    if (s1 === atual) return setFormError(fp, "A senha nova precisa ser diferente da atual.", $("nova-senha"));
     setFormError(fp, "");
     const btn = fp.querySelector("[type=submit]");
     setBusy(btn, true, "Trocando…");
+    // Confere a senha atual entrando de novo com ela; só então grava a nova
+    const email = auth.profile?.email || auth.user.email;
+    const check = await sb.auth.signInWithPassword({ email, password: atual });
+    if (check.error) {
+      setBusy(btn, false);
+      const code = check.error.code || "";
+      if (code === "invalid_credentials" || /invalid login credentials/i.test(check.error.message)) {
+        fireAndForget(sb.rpc("log_auth_event", { p_event: "falha", p_email: email }));
+        return setFormError(fp, "A senha atual está incorreta.", $("senha-atual"));
+      }
+      if (check.error.status === 429 || code.includes("rate_limit")) return setFormError(fp, "Muitas tentativas seguidas. Espere alguns minutos e tente de novo.");
+      return setFormError(fp, "Não foi possível conferir a senha atual agora. Tente de novo.");
+    }
     const { error } = await sb.auth.updateUser({ password: s1 });
     setBusy(btn, false);
     if (error) {

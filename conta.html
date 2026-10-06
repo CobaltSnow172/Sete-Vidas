@@ -96,6 +96,13 @@
             <h2 id="senha-h">Trocar senha</h2>
             <form class="auth-form" id="form-password" novalidate>
           <div class="field">
+            <label for="senha-atual">Senha atual</label>
+            <div class="pwd">
+              <input id="senha-atual" name="senha-atual" type="password" autocomplete="current-password" required maxlength="72">
+              <button class="pwd-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-toggle-pwd="senha-atual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <div class="field">
             <label for="nova-senha">Nova senha</label>
             <div class="pwd">
               <input id="nova-senha" name="nova-senha" type="password" autocomplete="new-password" required minlength="8" maxlength="72">
