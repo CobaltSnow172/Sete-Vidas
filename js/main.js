@@ -7,11 +7,12 @@
 const NUM_WORDS = ["Nenhum", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
   "Onze", "Doze", "Treze", "Catorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove", "Vinte"];
 
-// "Oito gatos procurando uma casa." com o número real
+// "Oito gatos procurando uma casa." com o número real (a linha fica invisível até o banco responder)
 function renderHeroCount() {
   const n = CATS.length;
   const word = NUM_WORDS[n] || String(n);
   document.getElementById("hero-count").textContent = `${word} ${n === 1 ? "gato" : "gatos"}`;
+  document.getElementById("hero-count-line").classList.remove("count-pending");
 }
 
 // Finais felizes: ilustração do gato + mensagem de quem adotou

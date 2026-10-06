@@ -66,7 +66,7 @@ function buildCharacters() {
 function buildCast() {
   const cols = [[], [], []];
   CATS.forEach((c, i) => cols[i % 3].push(c));
-  document.getElementById("cast-count").textContent = CATS.length;
+  document.getElementById("cast-count").textContent = `${CATS.length} ${CATS.length === 1 ? "gato" : "gatos"}`;
   document.getElementById("cast").innerHTML = cols.map((col) => `
     <div class="cast-col">
       ${col.map((c) => `

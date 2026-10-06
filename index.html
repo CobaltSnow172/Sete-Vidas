@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Sete Vidas">
-  <meta property="og:title" content="Sete Vidas · Oito gatos procurando uma casa">
+  <meta property="og:title" content="Sete Vidas · Gatos procurando uma casa">
   <meta property="og:description" content="Lar temporário em Teresina (PI). Gatos castrados, vacinados e testados, com acompanhamento de 30 dias.">
   <meta property="og:image" content="photos/tangerina-1600.jpg">
 
@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/home.css">
+  <noscript><style>.count-pending { opacity: 1; }</style></noscript>
 
   <!-- Ordem importa: cada arquivo usa o que os anteriores definem -->
   <script src="js/config.js" defer></script>
@@ -71,7 +72,7 @@
         <div>
           <p class="mono fade-in" style="--d:0">Lar temporário · Teresina, PI</p>
           <h1>
-            <span class="ln"><span style="--d:1" id="hero-count">Oito gatos</span></span>
+            <span class="ln count-pending" id="hero-count-line"><span style="--d:1" id="hero-count">Gatos</span></span>
             <span class="ln"><span style="--d:2">procurando</span></span>
             <span class="ln"><span style="--d:3" class="hot">uma casa.</span></span>
           </h1>
@@ -94,7 +95,7 @@
       <section class="cats" id="gatos" aria-labelledby="gatos-h">
         <div class="section-head">
           <div>
-            <p class="mono" id="count">8 gatos disponíveis</p>
+            <p class="mono" id="count">Gatos disponíveis</p>
             <h2 class="section-title" id="gatos-h">Quem está esperando</h2>
           </div>
           <!-- Preenchido por js/catalog.js → initFilter() -->
