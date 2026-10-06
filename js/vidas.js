@@ -12,15 +12,35 @@ const catById = (id) => CATS.find((c) => c.id === id);
 
 // ---------- Montagem ----------
 
+// O mosaico tem 8 lugares: com menos gatos, repete; com mais, usa os 8 primeiros.
+// Começa ampliado 1,45×: pede a foto maior para não borrar.
 function buildCollage() {
-  // O mosaico começa ampliado 1,45×: pede a foto maior para não borrar
-  document.getElementById("collage").innerHTML = CATS.map((c) => photoBox(c, "co-" + c.id, 'data-sizes="60vw"')).join("");
+  const tiles = Array.from({ length: Math.min(8, CATS.length ? 8 : 0) }, (_, i) => CATS[i % CATS.length]);
+  document.getElementById("collage").innerHTML = tiles.map((c, i) => photoBox(c, `co-${i}-${c.id}`, 'data-sizes="60vw"')).join("");
+}
+
+// Protagonistas: os gatos pedidos no HTML (data-cat); se algum foi removido no painel,
+// entra o próximo da lista. Cena sem gato disponível sai da página.
+function pickProtagonists() {
+  const scenes = [...document.querySelectorAll('[data-scene="char"]')];
+  const used = new Set();
+  scenes.forEach((s) => {
+    let c = catById(s.dataset.cat);
+    if (!c || used.has(c.id)) c = CATS.find((x) => !used.has(x.id));
+    if (!c) { s.remove(); return; }
+    used.add(c.id);
+    s.dataset.cat = c.id;
+    s.setAttribute("aria-label", c.name);
+    const others = CATS.filter((x) => x.id !== c.id);
+    const wanted = s.dataset.sats.split(",").map(catById).filter((x) => x && x.id !== c.id);
+    s.dataset.sats = [...new Set([...wanted, ...others].map((x) => x.id))].slice(0, 2).join(",");
+  });
 }
 
 function buildCharacters() {
   document.querySelectorAll('[data-scene="char"]').forEach((scene) => {
     const c = catById(scene.dataset.cat);
-    const sats = scene.dataset.sats.split(",").map(catById);
+    const sats = scene.dataset.sats.split(",").map(catById).filter(Boolean);
     const a = c.sex === "fêmea" ? "a" : "o";
     scene.querySelector(".stage").innerHTML = `
       <figure class="char-photo">${photoBox(c, "ch-" + c.id)}</figure>
@@ -29,7 +49,7 @@ function buildCharacters() {
         <h2 class="char-name rise">${c.name}</h2>
         <div class="rise">
           <blockquote>“${c.blurb}”</blockquote>
-          <div class="facts"><span>Convive com ${c.with}</span><span>${c.vac}</span><span>FIV/FeLV −</span></div>
+          <div class="facts"><span>Convive com ${withText(c)}</span><span>${c.vac}</span><span>FIV/FeLV −</span></div>
           <div class="cta-row" style="margin-top:24px">
             <a class="btn btn-primary" href="index.html#gato-${c.id}">Quero conhecer ${a} ${c.name.split(" ").pop()}</a>
           </div>
@@ -106,6 +126,7 @@ function initWallpaper() {
     const [w, h] = size();
     const my = ++token;
     const img = new Image();
+    img.crossOrigin = "anonymous"; // fotos do Supabase Storage: sem isso o canvas não exporta
     img.src = `${c.photo}-1600.jpg`;
     await Promise.all([
       img.decode(),
@@ -291,27 +312,30 @@ function onScroll() {
 
 // ---------- Início ----------
 
-buildCollage();
-buildCharacters();
-buildCast();
-buildChapters();
-initWallpaper();
-loadAllPhotos();
+loadCats().then(() => {
+  pickProtagonists();
+  buildCollage();
+  buildCharacters();
+  buildCast();
+  buildChapters();
+  initWallpaper();
+  loadAllPhotos();
 
-if (reduceMotion.matches) {
-  root.classList.add("still");
-  const onStill = () => { header.classList.toggle("solid", scrollY > 40); markChapter(scrollY); };
-  measureChapters();
-  onStill();
-  addEventListener("scroll", onStill, { passive: true });
-  addEventListener("resize", () => { measureChapters(); onStill(); });
-  addEventListener("load", () => { measureChapters(); onStill(); });
-} else {
-  measure();
-  update();
-  addEventListener("scroll", onScroll, { passive: true });
-  addEventListener("resize", () => { measure(); update(); });
-  // A fonte muda a largura do "VII" e dos cards: mede de novo quando chegar
-  document.fonts?.ready.then(() => { measure(); update(); });
-  addEventListener("load", () => { measure(); update(); });
-}
+  if (reduceMotion.matches) {
+    root.classList.add("still");
+    const onStill = () => { header.classList.toggle("solid", scrollY > 40); markChapter(scrollY); };
+    measureChapters();
+    onStill();
+    addEventListener("scroll", onStill, { passive: true });
+    addEventListener("resize", () => { measureChapters(); onStill(); });
+    addEventListener("load", () => { measureChapters(); onStill(); });
+  } else {
+    measure();
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", () => { measure(); update(); });
+    // A fonte muda a largura do "VII" e dos cards: mede de novo quando chegar
+    document.fonts?.ready.then(() => { measure(); update(); });
+    addEventListener("load", () => { measure(); update(); });
+  }
+});

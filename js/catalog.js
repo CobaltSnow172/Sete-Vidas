@@ -38,6 +38,7 @@ function renderGrid() {
       <div class="card-inner">
         ${photoBox(c, "g-" + c.id)}
         ${LONGEST_WAIT.includes(c.id) ? `<span class="wait-badge mono">Espera longa</span>` : ""}
+        ${favButton(c)}
         <div class="card-body">
           <div><span class="mono">${c.code} · ${GROUP_LABEL[c.group]}</span><h3>${c.name}</h3></div>
           <p class="blurb">${c.blurb}</p>

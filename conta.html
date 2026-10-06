@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Sua conta no Sete Vidas: favoritos, dados e senha.">
+  <meta name="robots" content="noindex">
+  <title>Minha conta · Sete Vidas</title>
+  <meta name="theme-color" content="#07090F">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/conta.css">
+
+  <script src="js/config.js" defer></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/ambient.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/db.js" defer></script>
+  <script src="js/illustration.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/conta.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="index.html" aria-label="Sete Vidas — início">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 27V9l6 5h10l6-5v18z" fill="none" stroke="var(--eye)" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="12" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+          <ellipse cx="20" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+        </svg>
+        SETE VIDAS
+      </a>
+      <nav class="links" aria-label="Principal">
+        <a href="index.html#gatos">Adotar</a>
+        <a href="antes-de-adotar.html">Antes de adotar</a>
+        <a href="como-ajudar.html">Como ajudar</a>
+        <a class="new" href="sete-vidas.html">Sete vidas</a>
+      </nav>
+      <div class="top-actions">
+        <div class="account" data-account>
+          <a class="account-btn" href="entrar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Entrar</span></a>
+        </div>
+        <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e tenho uma dúvida.">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </header>
+
+    <main id="conteudo" tabindex="-1">
+      <section class="account-page" aria-labelledby="conta-h">
+        <div class="account-head">
+          <div>
+            <p class="mono" id="conta-kicker">Minha conta</p>
+            <h1 id="conta-h">Olá!</h1>
+            <p class="section-lede" id="conta-sub"></p>
+          </div>
+          <div class="account-head-actions" id="conta-actions"></div>
+        </div>
+
+        <section class="panel" aria-labelledby="fav-h">
+          <div class="panel-head">
+            <h2 id="fav-h">Seus favoritos</h2>
+            <span class="mono" id="fav-count"></span>
+          </div>
+          <div class="fav-list" id="fav-list"></div>
+        </section>
+
+        <div class="account-forms">
+          <section class="panel" aria-labelledby="dados-h">
+            <h2 id="dados-h">Seus dados</h2>
+            <form class="auth-form" id="form-name" novalidate>
+              <div class="field">
+                <label for="conta-nome">Nome</label>
+                <input id="conta-nome" name="nome" type="text" autocomplete="name" required minlength="2" maxlength="60">
+              </div>
+              <div class="field">
+                <label for="conta-email">E-mail</label>
+                <input id="conta-email" type="email" readonly>
+              </div>
+              <p class="error" role="alert" hidden></p>
+              <button class="btn btn-primary" type="submit">Salvar nome</button>
+            </form>
+          </section>
+
+          <section class="panel" aria-labelledby="senha-h">
+            <h2 id="senha-h">Trocar senha</h2>
+            <form class="auth-form" id="form-password" novalidate>
+          <div class="field">
+            <label for="nova-senha">Nova senha</label>
+            <div class="pwd">
+              <input id="nova-senha" name="nova-senha" type="password" autocomplete="new-password" required minlength="8" maxlength="72">
+              <button class="pwd-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-toggle-pwd="nova-senha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <small class="hint">Pelo menos 8 caracteres, com letras e números.</small>
+          </div>
+          <div class="field">
+            <label for="nova-senha2">Repita a nova senha</label>
+            <div class="pwd">
+              <input id="nova-senha2" name="nova-senha2" type="password" autocomplete="new-password" required minlength="8" maxlength="72">
+              <button class="pwd-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-toggle-pwd="nova-senha2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            
+          </div>
+              <p class="error" role="alert" hidden></p>
+              <button class="btn btn-primary" type="submit">Trocar senha</button>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand" href="index.html">SETE VIDAS</a>
+        <p>Lar temporário independente em Teresina, PI. Castramos, vacinamos e acompanhamos cada adoção.</p>
+      </div>
+      <div>
+        <p class="mono">Páginas</p>
+        <ul>
+          <li><a href="index.html#gatos">Gatos para adoção</a></li>
+          <li><a href="antes-de-adotar.html">Antes de adotar</a></li>
+          <li><a href="como-ajudar.html">Como ajudar</a></li>
+          <li><a href="sete-vidas.html">Sete vidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono">Conta</p>
+        <ul>
+          <li><a href="conta.html">Minha conta e favoritos</a></li>
+          <li><a href="admin.html">Área administrativa</a></li>
+        </ul>
+      </div>
+      <p class="mono fine">Fotos dos gatos ilustrativas, via TheCatAPI</p>
+    </footer>
+  </div>
+</body>
+</html>

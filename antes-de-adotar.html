@@ -24,6 +24,8 @@
   <script src="js/config.js" defer></script>
   <script src="js/site.js" defer></script>
   <script src="js/ambient.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous" defer></script>
+  <script src="js/db.js" defer></script>
   <script src="js/checklist.js" defer></script>
 </head>
 <body>
@@ -44,10 +46,15 @@
         <a href="como-ajudar.html">Como ajudar</a>
         <a class="new" href="sete-vidas.html">Sete vidas</a>
       </nav>
-      <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e tenho uma dúvida sobre adoção.">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
-        WhatsApp
-      </a>
+      <div class="top-actions">
+        <div class="account" data-account>
+          <a class="account-btn" href="entrar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Entrar</span></a>
+        </div>
+        <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e tenho uma dúvida sobre adoção.">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          WhatsApp
+        </a>
+      </div>
     </header>
 
     <main id="conteudo" tabindex="-1">

@@ -62,8 +62,8 @@ const CATS = [
     since: "2025-09-30", energy: 1, traits: ["calmo", "carinhoso"], kids: false, dogs: false, cats: true },
 ];
 
-// Código de ficha: SV-001, SV-002...
-CATS.forEach((c, i) => (c.code = "SV-" + String(i + 1).padStart(3, "0")));
+// Código de ficha: SV-001, SV-002... (gatos vindos do banco já trazem o código)
+CATS.forEach((c, i) => (c.code ||= "SV-" + String(i + 1).padStart(3, "0")));
 
 // Dias desde a chegada e o texto "há 3 meses" usado nos cards e na ficha
 function daysWaiting(c) {
@@ -77,8 +77,18 @@ function waitLabel(c) {
   const y = Math.max(1, Math.round(d / 365)), m = Math.max(0, Math.round((d - y * 365) / 30));
   return `há ${y} ano${y > 1 ? "s" : ""}` + (m ? ` e ${m} ${m > 1 ? "meses" : "mês"}` : "");
 }
-// Os dois que esperam há mais tempo ganham o selo "Espera longa"
-const LONGEST_WAIT = [...CATS].sort((a, b) => daysWaiting(b) - daysWaiting(a)).slice(0, 2).map((c) => c.id);
+// Os dois que esperam há mais tempo ganham o selo "Espera longa" (recalculado quando a lista muda)
+let LONGEST_WAIT = [];
+function computeLongestWait() {
+  LONGEST_WAIT = [...CATS].sort((a, b) => daysWaiting(b) - daysWaiting(a)).slice(0, 2).map((c) => c.id);
+}
+computeLongestWait();
+
+// "Convive com ..." em texto, a partir dos três sim/não
+function withText(c) {
+  const yes = [c.kids && "crianças", c.dogs && "cães", c.cats && "gatos"].filter(Boolean);
+  return yes.length ? yes.join(", ") : "adultos";
+}
 
 const COMPAT = [
   { key: "kids", label: "Convive com crianças", short: "Crianças" },

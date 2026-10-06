@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Área administrativa do Sete Vidas.">
+  <meta name="robots" content="noindex">
+  <title>Administração · Sete Vidas</title>
+  <meta name="theme-color" content="#07090F">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/conta.css">
+
+  <script src="js/config.js" defer></script>
+  <script src="js/site.js" defer></script>
+  <script src="js/ambient.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/db.js" defer></script>
+  <script src="js/illustration.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/admin.js" defer></script>
+</head>
+<body class="admin-body">
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="index.html" aria-label="Sete Vidas — início">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 27V9l6 5h10l6-5v18z" fill="none" stroke="var(--eye)" stroke-width="2" stroke-linejoin="round"/>
+          <ellipse cx="12" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+          <ellipse cx="20" cy="19" rx="1.5" ry="2.6" fill="var(--eye)"/>
+        </svg>
+        SETE VIDAS
+      </a>
+      <nav class="links" aria-label="Principal">
+        <a href="index.html#gatos">Adotar</a>
+        <a href="antes-de-adotar.html">Antes de adotar</a>
+        <a href="como-ajudar.html">Como ajudar</a>
+        <a class="new" href="sete-vidas.html">Sete vidas</a>
+      </nav>
+      <div class="top-actions">
+        <div class="account" data-account>
+          <a class="account-btn" href="entrar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Entrar</span></a>
+        </div>
+        <a class="btn btn-wa btn-sm" href="https://wa.me/5586999971151" data-wa="Olá! Vim pelo site Sete Vidas e tenho uma dúvida.">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </header>
+
+    <main id="conteudo" tabindex="-1">
+      <!-- Sem login de administrador: acesso restrito -->
+      <section class="auth admin-gate" id="gate" aria-labelledby="gate-h" hidden>
+        <div class="auth-card">
+          <p class="mono">Área administrativa</p>
+          <h1 id="gate-h" tabindex="-1">Acesso restrito</h1>
+          <p class="auth-lede" id="gate-lede">Entre com uma conta de administrador para cadastrar, editar e remover gatos.</p>
+          <form class="auth-form" id="form-admin-login" novalidate>
+            <div class="field">
+              <label for="admin-email">E-mail</label>
+              <input id="admin-email" name="email" type="email" autocomplete="username" required maxlength="120">
+            </div>
+          <div class="field">
+            <label for="admin-senha">Senha</label>
+            <div class="pwd">
+              <input id="admin-senha" name="admin-senha" type="password" autocomplete="current-password" required minlength="8" maxlength="72">
+              <button class="pwd-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" data-toggle-pwd="admin-senha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            
+          </div>
+            <p class="error" role="alert" hidden></p>
+            <button class="btn btn-primary" type="submit">Entrar no painel</button>
+            <a class="link-btn" href="entrar.html?next=admin.html">Esqueci minha senha</a>
+          </form>
+          <div class="gate-denied" id="gate-denied" hidden>
+            <p class="notice warn" role="alert"></p>
+            <div class="cta-row">
+              <a class="btn btn-ghost" href="conta.html">Minha conta</a>
+              <button class="btn btn-primary" type="button" data-signout-gate>Entrar com outra conta</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Painel -->
+      <section class="admin" id="panel" aria-labelledby="panel-h" hidden>
+        <div class="admin-head">
+          <div>
+            <p class="mono">Área administrativa</p>
+            <h1 id="panel-h">Painel</h1>
+          </div>
+          <div class="seg" id="admin-tabs" role="group" aria-label="Seções do painel"></div>
+        </div>
+
+        <!-- Gatos -->
+        <div class="admin-view" id="view-gatos">
+          <div class="toolbar">
+            <label class="search">
+              <span class="sr-only">Buscar gato</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input id="cat-search" type="search" placeholder="Buscar por nome ou código" autocomplete="off">
+            </label>
+            <button class="btn btn-primary" type="button" id="cat-new">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Cadastrar gato
+            </button>
+          </div>
+          <p class="mono admin-note" id="cat-source"></p>
+          <ul class="cat-rows" id="cat-rows"></ul>
+        </div>
+
+        <!-- Usuários -->
+        <div class="admin-view" id="view-usuarios" hidden>
+          <p class="section-lede">Contas criadas no site. Administradores podem cadastrar, editar e remover gatos e ver o registro de acessos.</p>
+          <div class="table-scroll"><table class="data-table" id="users-table"></table></div>
+        </div>
+
+        <!-- Registro de acessos -->
+        <div class="admin-view" id="view-acessos" hidden>
+          <div class="toolbar">
+            <div class="seg" id="log-filter" role="group" aria-label="Filtrar registro"></div>
+            <button class="btn btn-ghost btn-sm" type="button" id="log-reload">Atualizar</button>
+          </div>
+          <p class="section-lede">Entradas, tentativas com senha errada, cadastros e saídas. Mostra os 300 mais recentes.</p>
+          <div class="table-scroll"><table class="data-table" id="log-table"></table></div>
+        </div>
+      </section>
+
+      <!-- Cadastro / edição de gato -->
+      <dialog class="editor" id="editor" aria-labelledby="editor-h">
+        <form id="cat-form" novalidate>
+          <header class="editor-head">
+            <div>
+              <p class="mono" id="editor-kicker">Novo gato</p>
+              <h2 id="editor-h">Cadastrar gato</h2>
+            </div>
+            <button class="x" type="button" aria-label="Fechar" data-close-editor>×</button>
+          </header>
+
+          <div class="editor-body">
+            <fieldset class="editor-section">
+              <legend>Identificação</legend>
+              <div class="grid-2">
+                <div class="field"><label for="e-name">Nome</label><input id="e-name" name="name" type="text" required maxlength="40" placeholder="Ex.: Tangerina"></div>
+                <fieldset class="field"><legend>Sexo</legend>
+                  <div class="radios">
+                    <label><input type="radio" name="sex" value="fêmea" required> Fêmea</label>
+                    <label><input type="radio" name="sex" value="macho"> Macho</label>
+                  </div>
+                </fieldset>
+                <div class="field"><label for="e-age">Idade</label><input id="e-age" name="age" type="text" required maxlength="20" placeholder="Ex.: 4 meses, 3 anos"></div>
+                <div class="field"><label for="e-group">Faixa etária</label>
+                  <select id="e-group" name="age_group" required>
+                    <option value="">Escolha…</option>
+                    <option value="filhote">Filhote</option>
+                    <option value="adulto">Adulto</option>
+                    <option value="idoso">Idoso</option>
+                  </select>
+                </div>
+                <div class="field"><label for="e-since">Chegou ao lar temporário em</label><input id="e-since" name="since" type="date" required min="2000-01-01"></div>
+                <div class="field"><label for="e-vac">Vacinas</label><input id="e-vac" name="vac" type="text" required maxlength="40" placeholder="Ex.: V4 em dia, V4 · 1ª dose"></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="editor-section">
+              <legend>Apresentação</legend>
+              <div class="field">
+                <label for="e-blurb">Frase que aparece no card</label>
+                <textarea id="e-blurb" name="blurb" required minlength="10" maxlength="160" rows="2" placeholder="Ex.: Sobe em tudo e depois não sabe descer."></textarea>
+                <small class="hint"><span id="e-blurb-count">0</span>/160 caracteres</small>
+              </div>
+              <div class="grid-2">
+                <div class="field"><label for="e-trait1">Personalidade 1</label><input id="e-trait1" name="trait1" type="text" required maxlength="20" placeholder="Ex.: brincalhona"></div>
+                <div class="field"><label for="e-trait2">Personalidade 2</label><input id="e-trait2" name="trait2" type="text" required maxlength="20" placeholder="Ex.: curiosa"></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="editor-section">
+              <legend>Convivência e ritmo</legend>
+              <fieldset class="field"><legend>Convive bem com <small class="hint">(deixe sem marcar o que não serve)</small></legend>
+                <div class="radios">
+                  <label><input type="checkbox" name="with_kids"> Crianças</label>
+                  <label><input type="checkbox" name="with_dogs"> Cães</label>
+                  <label><input type="checkbox" name="with_cats"> Outros gatos</label>
+                </div>
+              </fieldset>
+              <fieldset class="field"><legend>Energia</legend>
+                <div class="radios">
+                  <label><input type="radio" name="energy" value="1" required> Calmo</label>
+                  <label><input type="radio" name="energy" value="2"> Meio-termo</label>
+                  <label><input type="radio" name="energy" value="3"> Agitado</label>
+                </div>
+              </fieldset>
+            </fieldset>
+
+            <fieldset class="editor-section">
+              <legend>Foto</legend>
+              <div class="photo-edit">
+                <div class="field">
+                  <label for="e-photo">Arquivo da foto <small class="hint" id="e-photo-req">(obrigatória)</small></label>
+                  <input id="e-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                  <small class="hint">JPG, PNG ou WebP. O site gera as versões de 640 e 1600 px.</small>
+                </div>
+                <div class="focus-pick" id="focus-pick" hidden>
+                  <p class="hint">Clique no <b>rosto do gato</b>: é por ele que o site recorta a foto nos cards e na página Sete vidas.</p>
+                  <div class="focus-stage" id="focus-stage"><span class="focus-dot" id="focus-dot" aria-hidden="true"></span></div>
+                  <div class="focus-previews">
+                    <figure><div class="fp fp-card"></div><figcaption class="mono">Card</figcaption></figure>
+                    <figure><div class="fp fp-wide"></div><figcaption class="mono">Tela larga</figcaption></figure>
+                    <figure><div class="fp fp-tall"></div><figcaption class="mono">Celular</figcaption></figure>
+                  </div>
+                  <output class="mono" id="focus-out">Foco: 50% 50%</output>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset class="editor-section">
+              <legend>Ilustração <small class="hint">(aparece enquanto a foto carrega)</small></legend>
+              <div class="illus-edit">
+                <div class="grid-2">
+                  <div class="field"><label for="e-fur">Pelagem</label><input id="e-fur" name="fur" type="color" value="#E8913A"></div>
+                  <div class="field"><label for="e-eye">Olhos</label><input id="e-eye" name="eye" type="color" value="#8DBA4E"></div>
+                  <div class="field"><label for="e-pattern">Padrão</label>
+                    <select id="e-pattern" name="pattern" required>
+                      <option value="liso">Liso</option>
+                      <option value="tigrado">Tigrado (listras)</option>
+                      <option value="frajola">Frajola (preto e branco)</option>
+                      <option value="tricolor">Tricolor</option>
+                      <option value="siames">Siamês</option>
+                    </select>
+                  </div>
+                  <div class="field" id="e-stripe-field"><label for="e-stripe">Listras</label><input id="e-stripe" name="stripe" type="color" value="#B8621A"></div>
+                </div>
+                <div class="illus-preview" id="illus-preview" aria-label="Prévia da ilustração" role="img"></div>
+              </div>
+            </fieldset>
+          </div>
+
+          <footer class="editor-foot">
+            <p class="error" id="editor-error" role="alert" hidden></p>
+            <div class="cta-row">
+              <button class="btn btn-ghost" type="button" data-close-editor>Cancelar</button>
+              <button class="btn btn-primary" type="submit" id="editor-save">Salvar</button>
+            </div>
+          </footer>
+        </form>
+      </dialog>
+
+      <!-- Confirmação de remoção -->
+      <dialog class="confirm" id="confirm" aria-labelledby="confirm-h">
+        <h2 id="confirm-h">Remover gato?</h2>
+        <p id="confirm-text"></p>
+        <p class="error" id="confirm-error" role="alert" hidden></p>
+        <div class="cta-row">
+          <button class="btn btn-ghost" type="button" data-close-confirm>Cancelar</button>
+          <button class="btn btn-danger" type="button" id="confirm-yes">Remover</button>
+        </div>
+      </dialog>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand" href="index.html">SETE VIDAS</a>
+        <p>Lar temporário independente em Teresina, PI. Castramos, vacinamos e acompanhamos cada adoção.</p>
+      </div>
+      <div>
+        <p class="mono">Páginas</p>
+        <ul>
+          <li><a href="index.html#gatos">Gatos para adoção</a></li>
+          <li><a href="antes-de-adotar.html">Antes de adotar</a></li>
+          <li><a href="como-ajudar.html">Como ajudar</a></li>
+          <li><a href="sete-vidas.html">Sete vidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="mono">Conta</p>
+        <ul>
+          <li><a href="conta.html">Minha conta e favoritos</a></li>
+          <li><a href="admin.html">Área administrativa</a></li>
+        </ul>
+      </div>
+      <p class="mono fine">Fotos dos gatos ilustrativas, via TheCatAPI</p>
+    </footer>
+  </div>
+</body>
+</html>

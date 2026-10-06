@@ -12,9 +12,7 @@ let lastTrigger = null; // botão que abriu a ficha (recebe o foco de volta)
 
 const canMorph = () => "startViewTransition" in document && !reduceMotion.matches;
 
-function escapeHTML(text) {
-  return text.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
-}
+// escapeHTML() vem de js/db.js
 
 const ICON_CHAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/></svg>`;
 
@@ -54,6 +52,7 @@ function sheetHTML(c) {
         <span class="mono">${c.code} · ${GROUP_LABEL[c.group]}</span>
         <h2 id="sheet-name">${c.name}</h2>
         <div class="meta">${c.sex} · ${c.age}</div>
+        ${favButton(c).replace('class="fav"', 'class="fav fav-inline"')}
       </div>
     </div>
     <div class="sheet-body">
@@ -123,6 +122,10 @@ function openCat(c, trigger, { instant = false } = {}) {
     sheetContent.innerHTML = sheetHTML(c);
     const box = sheetContent.querySelector("#sheet-photo");
     if (photoUrl[c.id]) attachPhoto(box, photoUrl[c.id], false);
+    syncFavButtons(sheetContent);
+    // Conta logada: o nome já vem preenchido
+    const nome = sheetContent.querySelector("#f-nome");
+    if (nome && auth.profile?.name) nome.value = auth.profile.name;
     sheet.showModal();
     history.replaceState(null, "", "#gato-" + c.id);
   };

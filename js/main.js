@@ -1,7 +1,18 @@
 /* ==========================================================================
    Ponto de entrada. Os scripts são carregados com "defer", nesta ordem:
-   data → illustration → animations → api → catalog → match → modal → main
+   data → db → illustration → animations → api → catalog → match → modal → main
+   Os gatos vêm do Supabase (js/db.js → loadCats); sem banco, vale a lista de js/data.js.
    ========================================================================== */
+
+const NUM_WORDS = ["Nenhum", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
+  "Onze", "Doze", "Treze", "Catorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove", "Vinte"];
+
+// "Oito gatos procurando uma casa." com o número real
+function renderHeroCount() {
+  const n = CATS.length;
+  const word = NUM_WORDS[n] || String(n);
+  document.getElementById("hero-count").textContent = `${word} ${n === 1 ? "gato" : "gatos"}`;
+}
 
 // Finais felizes: ilustração do gato + mensagem de quem adotou
 function renderStories() {
@@ -13,13 +24,19 @@ function renderStories() {
     </figure>`).join("");
 }
 
-renderScanner(featuredCat());
-renderGrid();
-initFilter();
-initMatch();
-renderStories();
-initModal();
-loadAllPhotos();
+loadCats().then(() => {
+  renderHeroCount();
+  if (CATS.length) renderScanner(featuredCat());
+  else document.getElementById("scanner").hidden = true;
+  renderGrid();
+  initFilter();
+  applyFilter();
+  initMatch();
+  renderStories();
+  initModal();
+  loadAllPhotos();
+  syncFavButtons();
+});
 
 // Scanner do topo: inclina de leve seguindo o cursor e sobe um pouco mais rápido que a página
 // (se descesse, invadiria a seção de baixo)
