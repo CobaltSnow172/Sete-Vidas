@@ -8,6 +8,8 @@
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
+/* Esperando a sessão decidir se precisa terminar o cadastro (script no <head>, js/db.js) */
+.auth-wait body { visibility: hidden; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
 

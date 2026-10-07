@@ -12,6 +12,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <script>
+    /* Volta do GitHub ou conta sem nome de usuário: esconde a página até js/db.js decidir (evita piscar antes de ir para entrar.html) */
+    (function () {
+      var wait = /(^|[#&?])(access_token|code)=/.test(location.hash + location.search);
+      try {
+        var s = JSON.parse(localStorage.getItem("sb-zosxgljvcgaogsjcrvxi-auth-token") || "null"), u = s && s.user;
+        if (u && (u.app_metadata || {}).provider !== "email" && !(u.user_metadata || {}).sv_perfil) wait = true;
+      } catch (e) {}
+      if (wait) {
+        document.documentElement.classList.add("auth-wait");
+        setTimeout(function () { document.documentElement.classList.remove("auth-wait"); }, 6000);
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/conta.css">

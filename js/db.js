@@ -299,5 +299,7 @@ authReady.then(async () => {
 authReady.then(() => {
   if (needsProfile() && !/(^|\/)entrar\.html$/.test(location.pathname)) {
     location.replace(`entrar.html?modo=perfil&next=${hereForLogin()}`);
+    return; // a página continua escondida até trocar
   }
+  document.documentElement.classList.remove("auth-wait");
 });
