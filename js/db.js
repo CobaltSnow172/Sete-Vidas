@@ -53,7 +53,9 @@ async function loadCats() {
 // ---------- Sessão ----------
 
 const auth = { user: null, profile: null };
-const isAdmin = () => auth.profile?.role === "admin";
+// "master" (Admin Mestre) é administrador e também pode tirar o acesso de outros administradores
+const isAdmin = () => ["admin", "master"].includes(auth.profile?.role);
+const isMaster = () => auth.profile?.role === "master";
 
 async function loadProfile() {
   if (!auth.user) { auth.profile = null; return; }

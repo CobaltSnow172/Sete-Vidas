@@ -1,7 +1,7 @@
 /* ==========================================================================
    admin.html — acesso restrito + painel (gatos, usuários, registro de acessos).
    Toda escrita passa pelas regras do banco (RLS): mesmo que alguém burle esta
-   página, só uma conta com role = 'admin' consegue gravar.
+   página, só uma conta com role = 'admin' ou 'master' consegue gravar.
    ========================================================================== */
 
 (async function initAdmin() {
@@ -514,35 +514,96 @@
     ? { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }
     : { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
 
+  // Busca e paginação no banco: com milhares de contas, só a página atual vem para o navegador
+  const USERS_PAGE = 25;
+  const ROLE_LABEL = { master: ["Admin Mestre", "pill-master"], admin: ["Administrador", "pill-admin"], user: ["Usuário", ""] };
+  const users = { page: 0, term: "", total: 0, req: 0 };
+
+  // Tira o que quebraria o filtro do PostgREST (vírgula, parênteses, curingas, aspas)
+  const searchTerm = (v) => v.replace(/[,()*%\\:"'`]/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
+
+  function roleAction(u) {
+    if (u.id === auth.user.id || u.role === "master") return "";
+    if (u.role === "admin") {
+      return isMaster()
+        ? `<button class="btn btn-danger-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="user">Remover admin</button>`
+        : `<span class="hint" title="Só o Admin Mestre pode remover administradores">—</span>`;
+    }
+    return `<button class="btn btn-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="admin">Tornar admin</button>`;
+  }
+
   async function loadUsers() {
     const table = $("users-table");
-    table.innerHTML = `<caption class="sr-only">Contas do site</caption><tbody><tr><td class="hint">Carregando…</td></tr></tbody>`;
-    const [users, logins] = await Promise.all([
-      sb.from("profiles").select("id, name, email, role, created_at").order("created_at", { ascending: false }),
-      sb.from("login_log").select("user_id, at").eq("event", "login").order("at", { ascending: false }).limit(1000),
-    ]);
-    if (users.error) {
+    const req = ++users.req; // respostas atrasadas de buscas anteriores são ignoradas
+    const from = users.page * USERS_PAGE;
+    table.setAttribute("aria-busy", "true");
+    if (!table.querySelector("thead")) table.innerHTML = `<tbody><tr><td class="hint">Carregando…</td></tr></tbody>`;
+
+    let q = sb.from("profiles").select("id, name, email, role, created_at", { count: "exact" })
+      .order("created_at", { ascending: false }).range(from, from + USERS_PAGE - 1);
+    if (users.term) q = q.or(`name.ilike.%${users.term}%,email.ilike.%${users.term}%`);
+    const res = await q;
+    if (req !== users.req) return;
+    table.removeAttribute("aria-busy");
+    if (res.error) {
       table.innerHTML = `<tbody><tr><td class="error">Não foi possível carregar as contas.</td></tr></tbody>`;
+      $("users-count").textContent = "";
+      $("users-pager").hidden = true;
       return;
     }
+    users.total = res.count ?? res.data.length;
+    // Página que deixou de existir (ex.: estava na 5 e a busca achou 3 contas)
+    if (!res.data.length && users.page > 0) { users.page = 0; return loadUsers(); }
+
+    // Último acesso só das contas desta página
+    const ids = res.data.map((u) => u.id);
     const last = {};
-    (logins.data || []).forEach((r) => { if (r.user_id && !last[r.user_id]) last[r.user_id] = r.at; });
+    if (ids.length) {
+      const logins = await sb.from("login_log").select("user_id, at").eq("event", "login").in("user_id", ids)
+        .order("at", { ascending: false }).limit(ids.length * 20);
+      if (req !== users.req) return;
+      (logins.data || []).forEach((r) => { if (!last[r.user_id]) last[r.user_id] = r.at; });
+    }
+
     table.innerHTML = `
       <caption class="sr-only">Contas do site</caption>
       <thead><tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Criada em</th><th>Último acesso</th><th><span class="sr-only">Ações</span></th></tr></thead>
-      <tbody>${users.data.map((u) => {
-        const me = u.id === auth.user.id;
-        const admin = u.role === "admin";
+      <tbody>${res.data.length ? res.data.map((u) => {
+        const [label, cls] = ROLE_LABEL[u.role] || ROLE_LABEL.user;
         return `<tr>
-          <td>${esc(u.name) || '<span class="hint">sem nome</span>'}${me ? ' <span class="pill">você</span>' : ""}</td>
+          <td>${esc(u.name) || '<span class="hint">sem nome</span>'}${u.id === auth.user.id ? ' <span class="pill">você</span>' : ""}</td>
           <td>${esc(u.email)}</td>
-          <td><span class="pill ${admin ? "pill-admin" : ""}">${admin ? "Administrador" : "Usuário"}</span></td>
+          <td><span class="pill ${cls}">${label}</span></td>
           <td class="num">${fmtDate(u.created_at)}</td>
           <td class="num">${fmtDate(last[u.id], true)}</td>
-          <td>${me ? "" : `<button class="btn btn-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="${admin ? "user" : "admin"}">${admin ? "Remover admin" : "Tornar admin"}</button>`}</td>
+          <td>${roleAction(u)}</td>
         </tr>`;
-      }).join("")}</tbody>`;
+      }).join("") : `<tr><td colspan="6" class="hint">${users.term ? `Nenhuma conta encontrada para “${esc(users.term)}”.` : "Nenhuma conta ainda."}</td></tr>`}</tbody>`;
+
+    const n = (x) => x.toLocaleString("pt-BR");
+    const pages = Math.max(1, Math.ceil(users.total / USERS_PAGE));
+    $("users-count").textContent = users.total
+      ? `${n(from + 1)}–${n(from + res.data.length)} de ${n(users.total)} ${users.total === 1 ? "conta" : "contas"}`
+      : "";
+    $("users-pager").hidden = pages <= 1;
+    $("users-page").textContent = `Página ${n(users.page + 1)} de ${n(pages)}`;
+    $("users-prev").disabled = users.page === 0;
+    $("users-next").disabled = users.page >= pages - 1;
   }
+
+  let usersTimer;
+  $("users-search").addEventListener("input", (e) => {
+    clearTimeout(usersTimer);
+    usersTimer = setTimeout(() => {
+      const term = searchTerm(e.target.value);
+      if (term === users.term) return;
+      users.term = term;
+      users.page = 0;
+      loadUsers();
+    }, 300);
+  });
+  $("users-prev").addEventListener("click", () => { if (users.page > 0) { users.page--; loadUsers(); } });
+  $("users-next").addEventListener("click", () => { users.page++; loadUsers(); });
 
   $("users-table").addEventListener("click", async (e) => {
     const b = e.target.closest("[data-role-user]");

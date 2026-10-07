@@ -100,6 +100,8 @@
 }
 .search input:focus-visible { outline: none; border-color: var(--eye); }
 .admin-note { margin: 0; }
+.pager { display: flex; justify-content: center; align-items: center; gap: 12px; }
+.pager .mono { text-transform: none; letter-spacing: 0.02em; color: var(--ink-soft); }
 
 .cat-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .cat-row {
@@ -123,6 +125,7 @@
 .data-table td.num { white-space: nowrap; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 13px; }
 .pill { display: inline-block; padding: 3px 9px; border-radius: 999px; font: 500 12px/1.4 var(--body); color: var(--ink-soft); background: var(--panel-2); white-space: nowrap; }
 .pill-admin { color: var(--eye); background: rgb(255 178 62 / 0.12); }
+.pill-master { color: #1A1204; background: var(--eye); font-weight: 600; }
 .pill-ok { color: var(--ok); background: rgb(91 224 166 / 0.1); }
 .pill-warn { color: var(--warn); background: rgb(255 138 122 / 0.12); }
 .pill-info { color: var(--iris); background: rgb(143 123 255 / 0.14); }
