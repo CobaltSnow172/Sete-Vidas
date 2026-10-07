@@ -5,6 +5,7 @@
    ?modo=confirmado    volta do e-mail de confirmação
    ?modo=nova-senha    volta do e-mail de recuperação
    ?modo=github        volta do login pelo GitHub
+   ?modo=perfil        conta nova pelo GitHub: escolher o nome de usuário
    ?motivo=favoritos   explica por que pedimos login
    ========================================================================== */
 
@@ -13,10 +14,11 @@
   const next = safeNext(params.get("next"));
   const modo = params.get("modo");
   const $ = (id) => document.getElementById(id);
-  const forms = { login: $("form-login"), signup: $("form-signup"), forgot: $("form-forgot"), reset: $("form-reset") };
+  const forms = { login: $("form-login"), signup: $("form-signup"), perfil: $("form-perfil"), forgot: $("form-forgot"), reset: $("form-reset") };
   const TITLES = {
     login: ["Sua conta", "Entrar", "Salve os gatos que você gostou e preencha a ficha de adoção mais rápido."],
     signup: ["Sua conta", "Criar conta", "Leva um minuto. Depois é só confirmar o e-mail."],
+    perfil: ["Falta pouco", "Boas-vindas!", "Sua conta foi criada com o GitHub. Escolha o nome de usuário que vai aparecer no site."],
     forgot: ["Recuperar acesso", "Esqueci a senha", "Mandamos um link para você criar uma senha nova."],
     reset: ["Recuperar acesso", "Nova senha", "Escolha a senha nova da sua conta."],
   };
@@ -90,11 +92,39 @@
       else { show("forgot"); notice("Esse link expirou ou já foi usado. Peça um novo abaixo.", "warn"); }
       return;
     }
+    if (auth.user && needsProfile()) {
+      // Primeira vez pelo GitHub: sugere o nome que veio de lá, mas a pessoa decide
+      const meta = auth.user.user_metadata || {};
+      forms.perfil.nome.value = clean(auth.profile?.name || meta.full_name || meta.user_name || "").replace(/\s+/g, " ").trim().slice(0, 60);
+      notice("");
+      show("perfil");
+      return;
+    }
     if (auth.user) {
       if (modo === "confirmado") notice("E-mail confirmado! Você já está dentro.", "ok");
-      setTimeout(goNext, modo === "confirmado" ? 1200 : 0);
+      if (modo === "github") notice(`Que bom te ver de novo${firstName(auth.profile) ? ", " + firstName(auth.profile) : ""}!`, "ok");
+      setTimeout(goNext, modo === "confirmado" || modo === "github" ? 900 : 0);
     }
   });
+
+  // ---------- Nome de usuário (conta nova pelo GitHub) ----------
+  forms.perfil.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = forms.perfil;
+    const nome = f.nome.value.trim().replace(/\s+/g, " ");
+    if (nome.length < 2) return setFormError(f, "Escreva um nome de usuário com pelo menos 2 letras.", f.nome);
+    if (/[<>"`]/.test(nome)) return setFormError(f, "O nome não pode ter os caracteres < > \" `.", f.nome);
+    setFormError(f, "");
+    const btn = f.querySelector("[type=submit]");
+    setBusy(btn, true, "Salvando…");
+    const r = await completeProfile(nome);
+    setBusy(btn, false);
+    if (r.error) return setFormError(f, "Não foi possível salvar agora. Tente de novo.");
+    renderAccount();
+    notice(`Tudo certo, ${nome.split(" ")[0]}! Sua conta está pronta.`, "ok");
+    setTimeout(goNext, 900);
+  });
+  $("perfil-sair").addEventListener("click", signOut);
   // O link de recuperação também avisa por evento (quando o Supabase lê o link depois deste script)
   document.addEventListener("sv:auth", (e) => {
     if (e.detail.event === "PASSWORD_RECOVERY") show("reset");

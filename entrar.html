@@ -119,6 +119,17 @@
             <p class="hint">Enviamos um link para confirmar o e-mail antes do primeiro acesso.</p>
           </form>
 
+          <form class="auth-form" id="form-perfil" novalidate hidden>
+            <div class="field">
+              <label for="perfil-nome">Nome de usuário</label>
+              <input id="perfil-nome" name="nome" type="text" autocomplete="nickname" required minlength="2" maxlength="60">
+              <small class="hint">É assim que você vai aparecer no site. Dá para mudar depois em Minha conta.</small>
+            </div>
+            <p class="error" role="alert" hidden></p>
+            <button class="btn btn-primary" type="submit">Concluir cadastro</button>
+            <button class="link-btn" type="button" id="perfil-sair">Não é você? Sair</button>
+          </form>
+
           <form class="auth-form" id="form-forgot" novalidate hidden>
             <div class="field">
               <label for="forgot-email">E-mail da conta</label>

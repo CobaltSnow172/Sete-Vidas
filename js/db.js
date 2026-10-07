@@ -59,19 +59,24 @@ async function loadProfile() {
   if (!auth.user) { auth.profile = null; return; }
   const { data } = await sb.from("profiles").select("id, name, email, role, created_at").eq("id", auth.user.id).maybeSingle();
   auth.profile = data ? { ...data, name: clean(data.name) } : { id: auth.user.id, name: "", email: auth.user.email, role: "user" };
-  // Quem entrou pelo GitHub pode chegar sem "name" (o GitHub manda full_name / user_name): completa o perfil
-  if (data && !auth.profile.name) {
-    const meta = auth.user.user_metadata || {};
-    const nome = clean(meta.full_name || meta.name || meta.user_name || "").replace(/\s+/g, " ").trim().slice(0, 60);
-    if (nome) {
-      auth.profile.name = nome;
-      fireAndForget(sb.from("profiles").update({ name: nome }).eq("id", auth.user.id));
-    }
-  }
 }
 
 // Conta sem senha no site (entrou só pelo GitHub)
 const hasPassword = () => (auth.user?.app_metadata?.providers || [auth.user?.app_metadata?.provider]).includes("email");
+
+// Conta nova criada pelo GitHub que ainda não escolheu o nome de usuário.
+// Quem se cadastrou por e-mail já digitou o nome no formulário; a marca fica em user_metadata.
+const needsProfile = () => !!auth.user && auth.user.app_metadata?.provider !== "email" && !auth.user.user_metadata?.sv_perfil;
+
+async function completeProfile(nome) {
+  const { error } = await sb.from("profiles").update({ name: nome }).eq("id", auth.user.id);
+  if (error) return { error };
+  const r = await sb.auth.updateUser({ data: { sv_perfil: true } });
+  if (r.error) return { error: r.error };
+  auth.user = r.data.user;
+  auth.profile = { ...auth.profile, name: nome };
+  return { ok: true };
+}
 
 // Resolve quando já se sabe se há alguém logado (e o perfil dessa pessoa)
 const authReady = (async () => {
@@ -288,4 +293,11 @@ function renderAccount() {
 authReady.then(async () => {
   renderAccount();
   await loadFavorites();
+});
+
+// Conta nova pelo GitHub sem nome de usuário: termina o cadastro antes de usar o site
+authReady.then(() => {
+  if (needsProfile() && !/(^|\/)entrar\.html$/.test(location.pathname)) {
+    location.replace(`entrar.html?modo=perfil&next=${hereForLogin()}`);
+  }
 });
