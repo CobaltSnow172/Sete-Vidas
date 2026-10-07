@@ -13,7 +13,17 @@
 --             update public.profiles set role = 'admin' where email = '...';
 -- =============================================================================
 
-alter table public.profiles drop constraint if exists profiles_role_check;
+-- Troca a regra antiga de papéis (só user/admin), seja qual for o nome dela
+do $$
+declare c record;
+begin
+  for c in select conname from pg_constraint
+           where conrelid = 'public.profiles'::regclass and contype = 'c' and pg_get_constraintdef(oid) ilike '%role%'
+  loop
+    execute format('alter table public.profiles drop constraint %I', c.conname);
+  end loop;
+end;
+$$;
 alter table public.profiles add constraint profiles_role_check check (role in ('user', 'admin', 'master'));
 
 -- Admin Mestre também é administrador: todas as regras que usam is_admin() valem para ele
@@ -68,12 +78,9 @@ $$;
 revoke execute on function public.admin_set_role(uuid, text) from public, anon;
 grant execute on function public.admin_set_role(uuid, text) to authenticated;
 
--- Busca no painel por nome ou e-mail
-create extension if not exists pg_trgm with schema extensions;
-create index if not exists profiles_name_trgm_idx on public.profiles using gin (name extensions.gin_trgm_ops);
-create index if not exists profiles_email_trgm_idx on public.profiles using gin (email extensions.gin_trgm_ops);
+-- Ordem da lista de usuários e último acesso no painel
 create index if not exists profiles_created_at_idx on public.profiles (created_at desc);
 create index if not exists login_log_user_at_idx on public.login_log (user_id, at desc) where event = 'login';
 
--- Arthur (conta do GitHub CobaltSnow172) é o Admin Mestre
-update public.profiles set role = 'master' where id = 'c4cc61c4-1ebe-4820-b242-a5c7d934f7b6';
+-- Arthur é o Admin Mestre (pelo e-mail: o ID muda se a conta for apagada e criada de novo)
+update public.profiles set role = 'master' where lower(email) = 'arthurbr120@hotmail.com';
