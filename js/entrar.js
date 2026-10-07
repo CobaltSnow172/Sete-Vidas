@@ -179,7 +179,7 @@
     setBusy(btn, true, "Criando…");
     const { data, error } = await sb.auth.signUp({
       email, password: s1,
-      options: { data: { name: nome }, emailRedirectTo: authRedirect("?modo=confirmado" + (next ? "&next=" + encodeURIComponent(next) : "")) },
+      options: { data: authNameData(nome), emailRedirectTo: authRedirect("?modo=confirmado" + (next ? "&next=" + encodeURIComponent(next) : "")) },
     });
     setBusy(btn, false);
     if (error) {

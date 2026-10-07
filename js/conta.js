@@ -64,6 +64,7 @@
     setBusy(btn, false);
     if (error) return setFormError(fn, "Não foi possível salvar agora. Tente de novo.");
     auth.profile = { ...auth.profile, name: nome };
+    fireAndForget(sb.auth.updateUser({ data: authNameData(nome) }));
     $("conta-h").textContent = `Olá, ${firstName(auth.profile)}!`;
     renderAccount();
     showToast("Nome salvo");

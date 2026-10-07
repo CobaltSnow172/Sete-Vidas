@@ -68,10 +68,14 @@ const hasPassword = () => (auth.user?.app_metadata?.providers || [auth.user?.app
 // Quem se cadastrou por e-mail já digitou o nome no formulário; a marca fica em user_metadata.
 const needsProfile = () => !!auth.user && auth.user.app_metadata?.provider !== "email" && !auth.user.user_metadata?.sv_perfil;
 
+// Nome também nos metadados do Auth: é de lá que o painel do Supabase tira o "Display name"
+// (o site usa profiles.name; isto só mantém os dois iguais)
+const authNameData = (nome) => ({ name: nome, full_name: nome, display_name: nome });
+
 async function completeProfile(nome) {
   const { error } = await sb.from("profiles").update({ name: nome }).eq("id", auth.user.id);
   if (error) return { error };
-  const r = await sb.auth.updateUser({ data: { sv_perfil: true } });
+  const r = await sb.auth.updateUser({ data: { ...authNameData(nome), sv_perfil: true } });
   if (r.error) return { error: r.error };
   auth.user = r.data.user;
   auth.profile = { ...auth.profile, name: nome };
