@@ -522,14 +522,12 @@
   // Tira o que quebraria o filtro do PostgREST (vírgula, parênteses, curingas, aspas)
   const searchTerm = (v) => v.replace(/[,()*%\\:"'`]/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
 
+  // Só o Admin Mestre muda papéis (o banco também recusa qualquer outro)
   function roleAction(u) {
-    if (u.id === auth.user.id || u.role === "master") return "";
-    if (u.role === "admin") {
-      return isMaster()
-        ? `<button class="btn btn-danger-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="user">Remover admin</button>`
-        : `<span class="hint" title="Só o Admin Mestre pode remover administradores">—</span>`;
-    }
-    return `<button class="btn btn-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="admin">Tornar admin</button>`;
+    if (!isMaster() || u.id === auth.user.id || u.role === "master") return "";
+    return u.role === "admin"
+      ? `<button class="btn btn-danger-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="user">Remover admin</button>`
+      : `<button class="btn btn-ghost btn-sm" type="button" data-role-user="${esc(u.id)}" data-role="admin">Tornar admin</button>`;
   }
 
   async function loadUsers() {

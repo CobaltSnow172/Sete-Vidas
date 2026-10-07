@@ -6,9 +6,9 @@
 --
 -- Papéis:
 --   user    conta comum
---   admin   painel completo; pode tornar outras contas admin,
---           mas não pode tirar o acesso de outro administrador
---   master  tudo do admin + pode tirar o acesso de administradores.
+--   admin   painel completo
+--   master  tudo do admin + torna e tira contas de admin
+--           (até 20261007130000, admin comum também podia promover)
 --           Ninguém muda um master pelo site: só direto no banco, com
 --             update public.profiles set role = 'admin' where email = '...';
 -- =============================================================================
