@@ -59,7 +59,19 @@ async function loadProfile() {
   if (!auth.user) { auth.profile = null; return; }
   const { data } = await sb.from("profiles").select("id, name, email, role, created_at").eq("id", auth.user.id).maybeSingle();
   auth.profile = data ? { ...data, name: clean(data.name) } : { id: auth.user.id, name: "", email: auth.user.email, role: "user" };
+  // Quem entrou pelo GitHub pode chegar sem "name" (o GitHub manda full_name / user_name): completa o perfil
+  if (data && !auth.profile.name) {
+    const meta = auth.user.user_metadata || {};
+    const nome = clean(meta.full_name || meta.name || meta.user_name || "").replace(/\s+/g, " ").trim().slice(0, 60);
+    if (nome) {
+      auth.profile.name = nome;
+      fireAndForget(sb.from("profiles").update({ name: nome }).eq("id", auth.user.id));
+    }
+  }
 }
+
+// Conta sem senha no site (entrou só pelo GitHub)
+const hasPassword = () => (auth.user?.app_metadata?.providers || [auth.user?.app_metadata?.provider]).includes("email");
 
 // Resolve quando já se sabe se há alguém logado (e o perfil dessa pessoa)
 const authReady = (async () => {
@@ -204,8 +216,9 @@ function setFormError(form, msg, field) {
 }
 
 function setBusy(btn, busy, busyLabel = "Aguarde…") {
-  if (busy) { btn.dataset.label = btn.textContent; btn.textContent = busyLabel; }
-  else if (btn.dataset.label) btn.textContent = btn.dataset.label;
+  // Guarda o HTML (não só o texto) para não perder ícones do botão
+  if (busy) { btn.dataset.label = btn.innerHTML; btn.textContent = busyLabel; }
+  else if (btn.dataset.label) btn.innerHTML = btn.dataset.label;
   btn.disabled = busy;
   btn.setAttribute("aria-busy", String(busy));
 }

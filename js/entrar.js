@@ -4,6 +4,7 @@
    ?modo=cadastro      abre direto em "Criar conta"
    ?modo=confirmado    volta do e-mail de confirmação
    ?modo=nova-senha    volta do e-mail de recuperação
+   ?modo=github        volta do login pelo GitHub
    ?motivo=favoritos   explica por que pedimos login
    ========================================================================== */
 
@@ -34,7 +35,7 @@
     $("auth-kicker").textContent = kicker;
     $("auth-h").textContent = title;
     $("auth-lede").textContent = lede;
-    $("auth-tabs").hidden = !(view === "login" || view === "signup");
+    $("auth-tabs").hidden = $("auth-social").hidden = !(view === "login" || view === "signup");
     if (tabs && (view === "login" || view === "signup") && tabs.value !== view) tabs.select(view);
     if (focus) forms[view].querySelector("input")?.focus();
   }
@@ -44,6 +45,7 @@
   if (!sb) {
     notice("O login está indisponível no momento. Tente de novo mais tarde.", "warn");
     Object.values(forms).forEach((f) => (f.hidden = true));
+    $("auth-social").hidden = true;
     return;
   }
 
@@ -53,6 +55,33 @@
 
   if (params.get("motivo") === "favoritos") notice("Entre para salvar gatos nos seus favoritos.");
   show(modo === "cadastro" ? "signup" : "login", { focus: false });
+
+  // ---------- GitHub ----------
+  $("btn-github").addEventListener("click", async () => {
+    const btn = $("btn-github");
+    notice("");
+    setBusy(btn, true, "Abrindo o GitHub…");
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: "github",
+      options: { redirectTo: authRedirect("?modo=github" + (next ? "&next=" + encodeURIComponent(next) : "")) },
+    });
+    // Sem erro, o navegador já está indo para o GitHub
+    if (error) {
+      setBusy(btn, false);
+      notice("Não deu para abrir o login pelo GitHub agora. Tente de novo em instantes.", "warn");
+    }
+  });
+
+  // O GitHub (ou o Supabase) devolve erros na query ou no hash: ?error=access_denied&error_description=...
+  const hash = new URLSearchParams(location.hash.slice(1));
+  const oauthError = params.get("error") || hash.get("error");
+  if (oauthError) {
+    const desc = (params.get("error_description") || hash.get("error_description") || "").toLowerCase();
+    notice(oauthError === "access_denied" && !desc.includes("database")
+      ? "O login pelo GitHub foi cancelado. Você pode tentar de novo ou entrar com e-mail."
+      : "Não foi possível entrar pelo GitHub. Tente de novo ou use e-mail e senha.", "warn");
+    history.replaceState(null, "", location.pathname + (next ? "?next=" + encodeURIComponent(next) : ""));
+  }
 
   // ---------- Volta dos e-mails ----------
   authReady.then(() => {
@@ -127,7 +156,9 @@
       const code = error.code || "";
       if (code === "user_already_exists" || /already registered/i.test(error.message)) return setFormError(f, "Esse e-mail já tem conta. Entre ou recupere a senha.", f.email);
       if (code === "weak_password") return setFormError(f, PASSWORD_RULE, $("signup-senha"));
+      if (code === "over_email_send_rate_limit") return setFormError(f, "O limite de e-mails de confirmação desta hora acabou. Use “Continuar com GitHub” acima ou tente de novo mais tarde.");
       if (error.status === 429 || code.includes("rate_limit")) return setFormError(f, "Muitos cadastros seguidos. Espere alguns minutos e tente de novo.");
+      if (code === "email_address_not_authorized") return setFormError(f, "Não conseguimos enviar o e-mail de confirmação para esse endereço. Use “Continuar com GitHub” acima.");
       return setFormError(f, "Não foi possível criar a conta agora. Tente de novo em instantes.");
     }
     // Com confirmação de e-mail ligada, um e-mail já cadastrado volta sem "identities"

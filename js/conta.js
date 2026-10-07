@@ -71,6 +71,12 @@
 
   // ---------- Senha ----------
   const fp = $("form-password");
+  if (!hasPassword()) {
+    // Sem senha para conferir: quem entra pelo GitHub cuida da senha lá
+    $("senha-h").textContent = "Senha";
+    fp.outerHTML = `<p class="hint">Você entra pelo GitHub, então não tem senha neste site. Para trocar a senha, mude a do GitHub.</p>`;
+    return;
+  }
   fp.addEventListener("submit", async (e) => {
     e.preventDefault();
     const atual = $("senha-atual").value;
