@@ -36,7 +36,7 @@ function scanReveal(box, img) {
   );
 }
 
-// URL com extensão = arquivo único (ex.: TheCatAPI). Sem extensão = foto local em dois tamanhos
+// URL com extensão = arquivo único (ex.: foto enviada pelo painel). Sem extensão = foto local em dois tamanhos
 // (<base>-640.jpg e <base>-1600.jpg): o navegador baixa só o que a largura do bloco pede.
 // sizes: largura em que a foto aparece; blocos ampliados por transform (mosaico) avisam via data-sizes
 function setPhotoSource(img, url, sizes) {
