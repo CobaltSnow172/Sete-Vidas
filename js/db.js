@@ -1,7 +1,7 @@
 /* ==========================================================================
    Supabase: cliente, gatos do banco, sessão, favoritos e o botão de conta
    no cabeçalho de todas as páginas.
-   Sem Supabase configurado (ou fora do ar), o site segue com os gatos de js/data.js.
+   Sem Supabase configurado (ou fora do ar), as páginas avisam que os gatos não carregaram.
    ========================================================================== */
 
 const sb = window.supabase && SITE.supabaseUrl && SITE.supabaseKey
@@ -35,7 +35,9 @@ function catFromRow(r) {
 }
 
 let catsSource = "site";
+let catsLoadFailed = false; // banco fora do ar ou não configurado: as páginas mostram um aviso
 async function loadCats() {
+  catsLoadFailed = !sb;
   if (sb) {
     try {
       const { data, error } = await sb.from("cats").select("*").order("position", { ascending: true }).order("created_at");
@@ -43,7 +45,8 @@ async function loadCats() {
       CATS.splice(0, CATS.length, ...data.map(catFromRow));
       catsSource = "banco";
     } catch (e) {
-      console.warn("Gatos do banco indisponíveis; usando a lista do site.", e?.message || e);
+      catsLoadFailed = true;
+      console.warn("Gatos do banco indisponíveis.", e?.message || e);
     }
   }
   computeLongestWait();

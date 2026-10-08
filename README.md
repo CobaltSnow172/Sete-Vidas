@@ -24,8 +24,8 @@ photos/   fotos dos gatos (versões de 640 px e 1600 px)
 ## Como editar
 
 - **Contato e PIX:** em [`js/config.js`](js/config.js) ficam o número do WhatsApp que recebe as mensagens e a chave PIX para doações. Se a chave ficar vazia, a página "Como ajudar" pede para a pessoa perguntar pelo WhatsApp.
-- **Gatos:** em [`js/data.js`](js/data.js) fica o perfil de cada gato (nome, idade, vacinas, personalidade, com quem convive, foto). Para adicionar um gato, basta incluir um novo item na lista `CATS`: filtros, quiz e fichas se ajustam sozinhos.
-- **Fotos:** cada gato mostra só a própria foto, enviada pelo painel de administração (ou definida em `js/data.js`, em `photos/` com dois tamanhos: `<id>-640.jpg` e `<id>-1600.jpg`). Gato sem foto aparece com uma ilustração desenhada a partir da cor da pelagem.
+- **Gatos:** são cadastrados pelo painel de administração (`admin.html`) e ficam no banco (Supabase). Filtros, quiz e fichas se ajustam sozinhos. Histórias de adoção ficam em `ADOPTED`, em [`js/data.js`](js/data.js): só histórias reais, com autorização de quem adotou.
+- **Fotos:** cada gato mostra só a própria foto, enviada pelo painel de administração. Gato sem foto aparece com uma ilustração desenhada a partir da cor da pelagem.
 
 ## Rodar localmente
 

@@ -1,7 +1,7 @@
 /* ==========================================================================
    Ponto de entrada. Os scripts são carregados com "defer", nesta ordem:
    data → db → illustration → animations → api → catalog → match → modal → main
-   Os gatos vêm do Supabase (js/db.js → loadCats); sem banco, vale a lista de js/data.js.
+   Os gatos vêm do Supabase (js/db.js → loadCats); sem banco, a página avisa.
    ========================================================================== */
 
 const NUM_WORDS = ["Nenhum", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
@@ -9,14 +9,16 @@ const NUM_WORDS = ["Nenhum", "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "
 
 // "Oito gatos procurando uma casa." com o número real (a linha fica invisível até o banco responder)
 function renderHeroCount() {
+  if (catsLoadFailed) return; // sem número confiável: a linha continua só com "Gatos"
   const n = CATS.length;
   const word = NUM_WORDS[n] || String(n);
-  document.getElementById("hero-count").textContent = `${word} ${n === 1 ? "gato" : "gatos"}`;
+  document.getElementById("hero-count").textContent = `${word} ${n <= 1 ? "gato" : "gatos"}`;
   document.getElementById("hero-count-line").classList.remove("count-pending");
 }
 
 // Finais felizes: ilustração do gato + mensagem de quem adotou
 function renderStories() {
+  document.getElementById("adotados").hidden = !ADOPTED.length;
   document.getElementById("stories").innerHTML = ADOPTED.map((a, i) => `
     <figure class="story reveal">
       <div class="story-art">${catSVG(a, "st-" + i)}<span class="mono">Adotad${a.sex === "fêmea" ? "a" : "o"} em ${a.when}</span></div>
@@ -25,11 +27,24 @@ function renderStories() {
     </figure>`).join("");
 }
 
+// Lista vazia (banco fora do ar ou nenhum gato cadastrado): o aviso de "sem resultado" dos filtros
+// vira a mensagem da seção, e os filtros somem
+function renderCatsNotice() {
+  if (CATS.length) return;
+  const empty = document.getElementById("empty");
+  empty.querySelector("p").textContent = catsLoadFailed
+    ? "Não conseguimos carregar os gatos agora. Recarregue a página em instantes ou fale com a gente pelo WhatsApp."
+    : "Nenhum gato esperando adoção neste momento. Novos gatos chegam com frequência, volte em breve.";
+  document.getElementById("empty-reset").hidden = true;
+  document.getElementById("filters").hidden = true;
+}
+
 loadCats().then(() => {
   renderHeroCount();
   if (CATS.length) renderScanner(featuredCat());
   else document.getElementById("scanner").hidden = true;
   renderGrid();
+  renderCatsNotice();
   initFilter();
   applyFilter();
   initMatch();
