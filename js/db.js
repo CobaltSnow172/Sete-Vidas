@@ -122,7 +122,7 @@ async function signInWithEmail(email, password) {
     const msg = (error.message || "").toLowerCase();
     if (code === "invalid_credentials" || msg.includes("invalid login credentials")) {
       fireAndForget(sb.rpc("log_auth_event", { p_event: "falha", p_email: email }));
-      return { error: "E-mail ou senha incorretos." };
+      return { error: "E-mail ou senha incorretos. Se você criou a conta há pouco e cadastrou esse e-mail mais de uma vez, vale a senha do primeiro cadastro — ou use “Esqueci minha senha”." };
     }
     if (code === "email_not_confirmed" || msg.includes("not confirmed")) {
       return { error: "Falta confirmar o seu e-mail. Abra a mensagem que enviamos (veja também o spam).", unconfirmed: true };

@@ -196,6 +196,18 @@
       return setFormError(f, "Esse e-mail já tem conta. Entre ou recupere a senha.", f.email);
     }
     if (data.session) return goNext(); // confirmação desligada no projeto: já entra
+    // E-mail que já tinha um cadastro esperando confirmação: o Supabase reenvia o link mas
+    // NÃO troca a senha — ela continua a do primeiro cadastro. Sem este aviso, a pessoa tenta
+    // entrar com a senha nova e recebe "senha incorreta" para sempre.
+    const criadoEm = Date.parse(data.user?.created_at || "");
+    if (criadoEm && Date.now() - criadoEm > 2 * 60 * 1000) {
+      f.reset();
+      show("login", { focus: false });
+      forms.login.email.value = email;
+      lastEmail = email;
+      $("resend").hidden = false;
+      return notice(`Esse e-mail já tinha um cadastro esperando confirmação, e a senha dele é a do primeiro cadastro (não a que você acabou de digitar). Confirme pelo link que reenviamos para ${email}, ou use “Esqueci minha senha” para criar uma nova.`, "warn");
+    }
     f.reset();
     show("login", { focus: false });
     notice(`Quase lá! Enviamos um link para ${email}. Abra o e-mail e confirme para entrar (veja também o spam).`, "ok");
