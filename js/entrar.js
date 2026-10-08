@@ -23,6 +23,7 @@
     reset: ["Recuperar acesso", "Nova senha", "Escolha a senha nova da sua conta."],
   };
   let tabs;
+  let lastEmail = "";
 
   function notice(msg, kind = "") {
     const n = $("auth-notice");
@@ -57,6 +58,28 @@
 
   if (params.get("motivo") === "favoritos") notice("Entre para salvar gatos nos seus favoritos.");
   show(modo === "cadastro" ? "signup" : "login", { focus: false });
+
+  // Depois de criar a conta a página é recarregada (ver reloadToLogin): sem isso, o primeiro
+  // login na mesma página falhava com "senha incorreta" e só funcionava após recarregar.
+  // O aviso e o e-mail passam pelo sessionStorage (nunca pela URL).
+  const POS_CADASTRO = "sv:pos-cadastro";
+  let posCadastro = null;
+  try { posCadastro = JSON.parse(sessionStorage.getItem(POS_CADASTRO) || "null"); sessionStorage.removeItem(POS_CADASTRO); } catch (_) {}
+  if (posCadastro && posCadastro.email) {
+    show("login", { focus: false });
+    forms.login.email.value = posCadastro.email;
+    $("login-senha").value = "";
+    lastEmail = posCadastro.email;
+    $("resend").hidden = !posCadastro.resend;
+    notice(posCadastro.msg, posCadastro.kind);
+  }
+  function reloadToLogin(email, msg, kind, resend = false) {
+    try { sessionStorage.setItem(POS_CADASTRO, JSON.stringify({ email, msg, kind, resend })); }
+    catch (_) { // sem sessionStorage: segue sem recarregar
+      show("login", { focus: false }); forms.login.email.value = email; return notice(msg, kind);
+    }
+    location.replace(location.pathname + (next ? "?next=" + encodeURIComponent(next) : ""));
+  }
 
   // ---------- GitHub ----------
   $("btn-github").addEventListener("click", async () => {
@@ -131,7 +154,6 @@
   });
 
   // ---------- Entrar ----------
-  let lastEmail = "";
   forms.login.addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = forms.login;
@@ -202,16 +224,10 @@
     const criadoEm = Date.parse(data.user?.created_at || "");
     if (criadoEm && Date.now() - criadoEm > 2 * 60 * 1000) {
       f.reset();
-      show("login", { focus: false });
-      forms.login.email.value = email;
-      lastEmail = email;
-      $("resend").hidden = false;
-      return notice(`Esse e-mail já tinha um cadastro esperando confirmação, e a senha dele é a do primeiro cadastro (não a que você acabou de digitar). Confirme pelo link que reenviamos para ${email}, ou use “Esqueci minha senha” para criar uma nova.`, "warn");
+      return reloadToLogin(email, `Esse e-mail já tinha um cadastro esperando confirmação, e a senha dele é a do primeiro cadastro (não a que você acabou de digitar). Confirme pelo link que reenviamos para ${email}, ou use “Esqueci minha senha” para criar uma nova.`, "warn", true);
     }
     f.reset();
-    show("login", { focus: false });
-    notice(`Quase lá! Enviamos um link para ${email}. Abra o e-mail e confirme para entrar (veja também o spam).`, "ok");
-    forms.login.email.value = email;
+    reloadToLogin(email, `Quase lá! Enviamos um link para ${email}. Abra o e-mail e confirme para entrar (veja também o spam).`, "ok");
   });
 
   // ---------- Esqueci a senha ----------
